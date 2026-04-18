@@ -27,3 +27,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:navigationIcon="@drawable/arrow_left" />
 ```
+
+### Button
+
+## Общее
+* Нужно использовать com.google.android.material.button.MaterialButton
+* Размеры кнопки задавать внутри layout
+* Использовать стили ButtonPrimary, ButtonTextError, ButtonFind
+
+#### Пример
+```
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="Какое-то название"
+        style="@style/ButtonFind" />
+```

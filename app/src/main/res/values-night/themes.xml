@@ -1,7 +1,25 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.PracticumAndroidDiploma" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <style name="Base.Theme.PracticumAndroidDiploma" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="toolbarStyle">@style/CustomToolbar</item>
     </style>
+
+    <!-- Стили для Toolbar -->
+    <style name="CustomToolbar" parent="Widget.MaterialComponents.Toolbar">
+        <item name="android:minHeight">@dimen/toolbar_height</item>
+        <item name="android:layout_height">@dimen/toolbar_height</item>
+        <item name="contentInsetStart">@dimen/spacing_md</item>
+        <item name="contentInsetStartWithNavigation">@dimen/spacing_xs</item>
+        <item name="titleTextColor">@color/toolbar_color</item>
+        <item name="navigationIconTint">@color/toolbar_color</item>
+        <item name="android:paddingEnd">@dimen/spacing_xs</item>
+    </style>
+
+    <style name="CustomToolbarTitle">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">@dimen/text_size_xl</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="Theme.PracticumAndroidDiploma" parent="Base.Theme.PracticumAndroidDiploma" />
 </resources>

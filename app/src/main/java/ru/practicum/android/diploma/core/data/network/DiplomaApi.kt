@@ -18,7 +18,6 @@ interface DiplomaApi {
         @Header("Authorization") token: String
     ): Response<List<AreaDto>>
 
-
     @Headers("Content-Type: application/json")
     @GET("industries")
     suspend fun getIndustries(

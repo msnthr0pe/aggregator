@@ -1,24 +1,25 @@
-package ru.practicum.android.diploma.vacancy_search.ui
+package ru.practicum.android.diploma.settingsfilter.ui
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import ru.practicum.android.diploma.R
-import ru.practicum.android.diploma.databinding.FragmentVacancySearchBinding
+import ru.practicum.android.diploma.databinding.FragmentFiltersBinding
 
-class VacancySearchFragment : Fragment() {
+class FiltersFragment : Fragment() {
 
-    private var _binding: FragmentVacancySearchBinding? = null
+    private var _binding: FragmentFiltersBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentVacancySearchBinding.inflate(inflater, container, false)
+        _binding = FragmentFiltersBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -26,11 +27,11 @@ class VacancySearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.button.setOnClickListener {
-            findNavController().navigate(R.id.action_vacancySearchFragment_to_vacancyFragment)
+            findNavController().navigate(R.id.action_filtersFragment_to_chooseIndustryFragment)
         }
 
         binding.button2.setOnClickListener {
-            findNavController().navigate(R.id.action_vacancySearchFragment_to_filtersFragment)
+            findNavController().navigate(R.id.action_filtersFragment_to_chooseWorkPlaceFragment)
         }
     }
 
@@ -38,6 +39,5 @@ class VacancySearchFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 
 }

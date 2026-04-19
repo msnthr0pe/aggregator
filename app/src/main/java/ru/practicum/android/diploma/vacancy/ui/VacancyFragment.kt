@@ -1,12 +1,10 @@
 package ru.practicum.android.diploma.vacancy.ui
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import ru.practicum.android.diploma.R
-import ru.practicum.android.diploma.databinding.FragmentTeamBinding
+import androidx.fragment.app.Fragment
 import ru.practicum.android.diploma.databinding.FragmentVacancyBinding
 
 class VacancyFragment : Fragment() {
@@ -15,7 +13,8 @@ class VacancyFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentVacancyBinding.inflate(inflater, container, false)
@@ -30,6 +29,5 @@ class VacancyFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 
 }

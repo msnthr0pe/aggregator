@@ -1,13 +1,11 @@
-package ru.practicum.android.diploma.choose_country.ui
+package ru.practicum.android.diploma.choosecountry.ui
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import ru.practicum.android.diploma.R
+import androidx.fragment.app.Fragment
 import ru.practicum.android.diploma.databinding.FragmentChooseCountryBinding
-import ru.practicum.android.diploma.databinding.FragmentChooseWorkPlaceBinding
 
 class ChooseCountryFragment : Fragment() {
 
@@ -15,7 +13,8 @@ class ChooseCountryFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentChooseCountryBinding.inflate(inflater, container, false)

@@ -3,4 +3,25 @@
     <style name="ButtonFind" parent="ButtonPrimary">
         <item name="android:fontFamily">@font/ys_display_regular</item>
     </style>
+
+    <style name="CustomBottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemIconSize">24dp</item>
+        <item name="itemIconTint">@color/bottom_navigation_colors</item>
+        <item name="itemTextColor">@color/bottom_navigation_colors</item>
+        <item name="itemTextAppearanceActive">@style/TextAppearance.CustomBottomNav.Active</item>
+        <item name="itemTextAppearanceInactive">@style/TextAppearance.CustomBottomNav.Inactive</item>
+        <item name="backgroundTint">@color/white</item>
+    </style>
+
+    <style name="TextAppearance.CustomBottomNav.Active" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textSize">@dimen/text_size_xs</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+    </style>
+
+    <style name="TextAppearance.CustomBottomNav.Inactive" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textSize">@dimen/text_size_xs</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+    </style>
 </resources>
+
+

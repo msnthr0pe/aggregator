@@ -14,12 +14,12 @@
     </style>
 
     <style name="TextAppearance.CustomBottomNav.Active" parent="TextAppearance.AppCompat.Caption">
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">@dimen/text_size_xs</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
     </style>
 
     <style name="TextAppearance.CustomBottomNav.Inactive" parent="TextAppearance.AppCompat.Caption">
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">@dimen/text_size_xs</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
     </style>
 </resources>

@@ -6,11 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentVacancySearchBinding
 
 class VacancySearchFragment : Fragment() {
 
+    private val viewModel by viewModel<VacancySearchViewModels>()
     private var _binding: FragmentVacancySearchBinding? = null
     private val binding get() = _binding!!
 
@@ -33,6 +35,8 @@ class VacancySearchFragment : Fragment() {
         binding.button2.setOnClickListener {
             findNavController().navigate(R.id.action_vacancySearchFragment_to_filtersFragment)
         }
+
+        viewModel.searchVacancy()
     }
 
     override fun onDestroyView() {

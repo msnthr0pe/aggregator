@@ -6,11 +6,17 @@ import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.Path
 import retrofit2.http.Query
-import ru.practicum.android.diploma.core.data.dto.AreaDto
-import ru.practicum.android.diploma.core.data.dto.IndustryDto
-import ru.practicum.android.diploma.core.data.dto.VacancyCardResponse
-import ru.practicum.android.diploma.core.data.dto.VacancyDetailDto
+import ru.practicum.android.diploma.core.data.dto.area.AreaDto
+import ru.practicum.android.diploma.core.data.dto.industry.IndustryDto
+import ru.practicum.android.diploma.core.data.dto.vacancycard.VacancyCardResponse
+import ru.practicum.android.diploma.core.data.dto.vacancydetail.VacancyDetailDto
 
+/**
+ * API приложения
+ *
+ * В этом интерфейсе возвращается Response от retrofit2 (внутри data class с Response приложения)
+ * Это необходимо для ля корректной работы функции handle в RetrofitNetworkClient
+ * */
 interface DiplomaApi {
     @Headers("Content-Type: application/json")
     @GET("areas")
@@ -28,12 +34,12 @@ interface DiplomaApi {
     @GET("vacancies")
     suspend fun getVacancies(
         @Header("Authorization") token: String,
-        @Query("area") area: Int? = null,
-        @Query("industry") industry: Int? = null,
-        @Query("text") text: String? = null,
-        @Query("salary") salary: Int? = null,
-        @Query("page") page: Int? = null,
-        @Query("only_with_salary") onlyWithSalary: Boolean? = null,
+        @Query("area") area: Int?,
+        @Query("industry") industry: Int?,
+        @Query("text") text: String?,
+        @Query("salary") salary: Int?,
+        @Query("page") page: Int?,
+        @Query("only_with_salary") onlyWithSalary: Boolean?,
     ): Response<VacancyCardResponse>
 
     @Headers("Content-Type: application/json")

@@ -57,18 +57,15 @@ class RetrofitNetworkClient(
     private fun isConnected(): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-        if (capabilities != null) {
-            when {
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> return true
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> return true
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> return true
-            }
-        }
-        return false
+
+        return capabilities != null &&
+                (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
     }
 
     /** Универсальный обработчик всех запросов на сервер */
-     private suspend fun <T> handle(block: suspend () -> retrofit2.Response<T>): Response<T> {
+    private suspend fun <T> handle(block: suspend () -> retrofit2.Response<T>): Response<T> {
         return withContext(Dispatchers.IO) {
             try {
                 val response = block()

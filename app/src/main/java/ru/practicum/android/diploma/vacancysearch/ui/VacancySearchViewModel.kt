@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.BuildConfig
 import ru.practicum.android.diploma.vacancysearch.domain.api.VacancySearchInteractor
 
-class VacancySearchViewModels(
+class VacancySearchViewModel(
     private val vacancySearchInteractor: VacancySearchInteractor
 ) : ViewModel() {
 

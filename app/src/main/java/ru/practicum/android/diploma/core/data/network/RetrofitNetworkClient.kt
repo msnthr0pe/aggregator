@@ -59,9 +59,9 @@ class RetrofitNetworkClient(
         val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
 
         return capabilities != null &&
-                (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
-                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
+            (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
     }
 
     /** Универсальный обработчик всех запросов на сервер */
@@ -74,7 +74,7 @@ class RetrofitNetworkClient(
                 result.resultCode = response.code()
 
                 result
-            } catch (e: Throwable) {
+            } catch (_: IllegalArgumentException) {
                 Response<T>().apply { resultCode = CODE_500 }
             }
         }

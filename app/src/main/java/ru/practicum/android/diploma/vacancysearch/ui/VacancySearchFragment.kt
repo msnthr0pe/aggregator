@@ -12,7 +12,7 @@ import ru.practicum.android.diploma.databinding.FragmentVacancySearchBinding
 
 class VacancySearchFragment : Fragment() {
 
-    private val viewModel by viewModel<VacancySearchViewModels>()
+    private val viewModel by viewModel<VacancySearchViewModel>()
     private var _binding: FragmentVacancySearchBinding? = null
     private val binding get() = _binding!!
 

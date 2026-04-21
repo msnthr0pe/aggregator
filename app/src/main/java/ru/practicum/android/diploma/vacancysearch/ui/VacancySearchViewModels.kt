@@ -9,7 +9,7 @@ import ru.practicum.android.diploma.vacancysearch.domain.api.VacancySearchIntera
 
 class VacancySearchViewModels(
     private val vacancySearchInteractor: VacancySearchInteractor
-): ViewModel() {
+) : ViewModel() {
 
     /** Тестовый метод для поиска вакансий */
     fun searchVacancy() {

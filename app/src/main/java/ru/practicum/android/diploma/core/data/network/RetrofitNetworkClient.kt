@@ -14,16 +14,21 @@ import ru.practicum.android.diploma.core.data.dto.vacancydetail.VacancyDetailReq
 class RetrofitNetworkClient(
     private val diplomaApi: DiplomaApi,
     private val context: Context
-): NetworkClient {
+) : NetworkClient {
+    companion object {
+        const val CODE_400 = 400
+        const val CODE_500 = 500
+    }
+
     override suspend fun <T>doRequest(dto: Any): Response<T> {
         if (!isConnected()) {
             return Response<T>().apply { resultCode = -1 }
         }
 
-        return when(dto) {
+        return when (dto) {
             is VacancyCardRequest -> {
                 handle { diplomaApi.getVacancies(
-                    token = "Bearer ${dto.token}",
+                    token = dto.token,
                     area = dto.area,
                     industry = dto.industry,
                     text = dto.text,
@@ -34,24 +39,23 @@ class RetrofitNetworkClient(
             }
 
             is AreaRequest -> {
-                handle { diplomaApi.getAreas(token = "Bearer ${dto.token}") }
+                handle { diplomaApi.getAreas(token = dto.token) }
             }
 
             is IndustryRequest -> {
-                handle { diplomaApi.getIndustries(token = "Bearer ${dto.token}") }
+                handle { diplomaApi.getIndustries(token = dto.token) }
             }
 
             is VacancyDetailRequest -> {
-                handle { diplomaApi.getVacancy(token = "Bearer ${dto.token}", id = dto.id) }
+                handle { diplomaApi.getVacancy(token = dto.token, id = dto.id) }
             }
 
-            else -> Response<Any>().apply { resultCode = 400 }
+            else -> Response<Any>().apply { resultCode = CODE_400 }
         } as Response<T>
     }
 
     private fun isConnected(): Boolean {
-        val connectivityManager = context.getSystemService(
-            Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
         if (capabilities != null) {
             when {
@@ -73,8 +77,8 @@ class RetrofitNetworkClient(
                 result.resultCode = response.code()
 
                 result
-            } catch (e: Exception) {
-                Response<T>().apply { resultCode = 500 }
+            } catch (e: Throwable) {
+                Response<T>().apply { resultCode = CODE_500 }
             }
         }
     }

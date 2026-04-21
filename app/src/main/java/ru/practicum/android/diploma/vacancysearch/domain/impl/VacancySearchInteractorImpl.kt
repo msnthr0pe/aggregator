@@ -7,7 +7,7 @@ import ru.practicum.android.diploma.vacancysearch.domain.api.VacancySearchReposi
 
 class VacancySearchInteractorImpl(
     private val repository: VacancySearchRepository
-): VacancySearchInteractor {
+) : VacancySearchInteractor {
     override fun vacancySearch(
         token: String,
         area: Int?,

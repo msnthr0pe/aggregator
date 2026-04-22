@@ -27,14 +27,18 @@ class RetrofitNetworkClient(
 
         return when (dto) {
             is VacancyCardRequest -> {
+                val filters = mapOf(
+                    "token" to dto.token,
+                    "area" to dto.area,
+                    "industry" to dto.industry,
+                    "text" to dto.text,
+                    "salary" to dto.salary,
+                    "page" to dto.page,
+                    "onlyWithSalary" to dto.onlyWithSalary
+                )
                 handle { diplomaApi.getVacancies(
                     token = dto.token,
-                    area = dto.area,
-                    industry = dto.industry,
-                    text = dto.text,
-                    salary = dto.salary,
-                    page = dto.page,
-                    onlyWithSalary = dto.onlyWithSalary
+                    filters = filters,
                 ) }
             }
 

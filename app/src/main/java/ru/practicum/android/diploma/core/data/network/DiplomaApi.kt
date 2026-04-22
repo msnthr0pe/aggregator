@@ -5,7 +5,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.QueryMap
 import ru.practicum.android.diploma.core.data.dto.area.AreaDto
 import ru.practicum.android.diploma.core.data.dto.industry.IndustryDto
 import ru.practicum.android.diploma.core.data.dto.vacancycard.VacancyCardResponse
@@ -30,16 +30,27 @@ interface DiplomaApi {
         @Header("Authorization") token: String
     ): Response<List<IndustryDto>>
 
+    /**
+     * При обычном подходе получается слишком много параметров у функции,
+     * поэтому используем QueryMap
+     *
+     * Пример использования:
+     * val filters = mapOf(
+     *     "area" to 1,
+     *     "industry" to null, // Retrofit автоматически пропустит null
+     *     "text" to "Kotlin developer",
+     *     "salary" to 150000,
+     *     "page" to 0,
+     *     "only_with_salary" to true
+     * )
+     *
+     * val response = api.getVacancies("Bearer your_token", filters)
+     */
     @Headers("Content-Type: application/json")
     @GET("vacancies")
     suspend fun getVacancies(
         @Header("Authorization") token: String,
-        @Query("area") area: Int?,
-        @Query("industry") industry: Int?,
-        @Query("text") text: String?,
-        @Query("salary") salary: Int?,
-        @Query("page") page: Int?,
-        @Query("only_with_salary") onlyWithSalary: Boolean?,
+        @QueryMap filters: Map<String, Any?>
     ): Response<VacancyCardResponse>
 
     @Headers("Content-Type: application/json")

@@ -2,6 +2,7 @@
 <resources>
     <dimen name="spacing_xs">4dp</dimen>
     <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_12">12dp</dimen>
     <dimen name="spacing_md">16dp</dimen>
     <dimen name="spacing_lg">20dp</dimen>
     <dimen name="spacing_xl">24dp</dimen>
@@ -22,5 +23,6 @@
     <dimen name="radius_xl">28dp</dimen>
 
     <dimen name="toolbar_height">64dp</dimen>
+    <dimen name="vacancy_item_size">48dp</dimen>
 </resources>
 

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/vacancyItemImg"
+        android:layout_width="@dimen/vacancy_item_size"
+        android:layout_height="@dimen/vacancy_item_size"
+        android:src="@drawable/vacancy_placeholder"
+        android:layout_marginEnd="@dimen/spacing_12"
+        app:shapeAppearanceOverlay="@style/VacancyItemImg"
+        style="@style/VacancyItemImg" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/vacancyItemTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Какое-то ооооооооооооочень длинное название, город"
+            style="@style/VacancyItemTitle" />
+
+        <TextView
+            android:id="@+id/vacancyItemCompany"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Алиса"
+            style="@style/VacancyItemText" />
+
+        <TextView
+            android:id="@+id/vacancyItemSalary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="От 100 000 рублей"
+            style="@style/VacancyItemText" />
+    </LinearLayout>
+</LinearLayout>

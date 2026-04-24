@@ -2,6 +2,9 @@
 <resources>
     <style name="ButtonFind" parent="ButtonPrimary">
         <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">@dimen/text_size_md</item>
+        <item name="android:paddingVertical">@dimen/spacing_xs</item>
+        <item name="android:paddingHorizontal">@dimen/spacing_12</item>
     </style>
 
     <style name="CustomBottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView">
@@ -44,6 +47,32 @@
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textSize">@dimen/text_size_md</item>
         <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="SearchLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">@dimen/text_size_md</item>
+        <item name="android:paddingVertical">@dimen/spacing_sm</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/radius_md</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/radius_md</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/radius_md</item>
+        <item name="boxCornerRadiusTopStart">@dimen/radius_md</item>
+        <item name="boxBackgroundColor">@color/light_gray</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeWidthFocused">0dp</item>
+    </style>
+
+    <style name="SearchEditText">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/gray</item>
+        <item name="android:inputType">text</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:drawableTint">@color/black</item>
+    </style>
+
+    <style name="SearchProgressBar">
+        <item name="android:indeterminateTint">@color/blue</item>
     </style>
 </resources>
 

@@ -7,4 +7,6 @@
     <string name="team">Команда</string>
     <string name="vacancy_search">Поиск вакансий</string>
     <string name="enter_your_query">Введите запрос</string>
+    <string name="empty_list">Список Пуст</string>
+    <string name="favorites_error_load">Не удалось получить\nсписок вакансий</string>
 </resources>

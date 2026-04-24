@@ -6,34 +6,24 @@
     android:layout_height="match_parent"
     tools:context=".favorites.ui.FavoritesFragment">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/iconView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/system_bar"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="@dimen/spacing_sm"
-        android:layout_marginTop="@dimen/spacing_sm" />
-
     <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/favoritesToolBar"
+        android:id="@+id/favoritesToolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
         app:title="@string/favorites"
-        android:layout_marginTop="@dimen/spacing_sm"
-        app:layout_constraintTop_toBottomOf="@+id/iconView"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/favoritesRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/spacing_md"
-        app:layout_constraintTop_toBottomOf="@+id/favoritesToolBar"
+        app:layout_constraintTop_toBottomOf="@+id/favoritesToolbar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:id="@+id/placeholderEmptyList"
@@ -41,10 +31,10 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@+id/favoritesToolBar"
+        app:layout_constraintTop_toBottomOf="@+id/favoritesToolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/spacing_favorites_placeholder"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:visibility="gone">
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -70,10 +60,10 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@+id/favoritesToolBar"
+        app:layout_constraintTop_toBottomOf="@+id/favoritesToolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/spacing_favorites_placeholder"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:visibility="gone">
 
         <androidx.appcompat.widget.AppCompatImageView

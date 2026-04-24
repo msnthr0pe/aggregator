@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Practicum-Android-Diploma</string>
+    <string name="filter_settings">Настройки фильтрации</string>
+    <string name="favorites">Избранное</string>
+    <string name="share">Поделиться</string>
+    <string name="main">Главная</string>
+    <string name="team">Команда</string>
 </resources>

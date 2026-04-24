@@ -24,5 +24,6 @@
 
     <dimen name="toolbar_height">64dp</dimen>
     <dimen name="vacancy_item_size">48dp</dimen>
+    <dimen name="placeholder_image_height">220dp</dimen>
 </resources>
 

@@ -5,4 +5,6 @@
     <string name="share">Поделиться</string>
     <string name="main">Главная</string>
     <string name="team">Команда</string>
+    <string name="empty_list">Список Пуст</string>
+    <string name="favorites_error_load">Не удалось получить\nсписок вакансий</string>
 </resources>

@@ -1,20 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".favorites.ui.FavoritesFragment">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="FavoritesFragment" />
-
-    <Button
-        android:id="@+id/button"
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iconView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="move to vacancy"/>
+        android:src="@drawable/system_bar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/spacing_sm"
+        android:layout_marginTop="@dimen/spacing_sm" />
 
-</FrameLayout>
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/favoritesToolBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        app:title="@string/favorites"
+        android:layout_marginTop="@dimen/spacing_sm"
+        app:layout_constraintTop_toBottomOf="@+id/iconView"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/favoritesRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/spacing_md"
+        app:layout_constraintTop_toBottomOf="@+id/favoritesToolBar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/placeholderEmptyList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@+id/favoritesToolBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/spacing_favorites_placeholder"
+        android:visibility="gone">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/placeholderEmptyListImage"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/placeholder_image_height"
+            android:layout_marginHorizontal="@dimen/spacing_md"
+            android:src="@drawable/favorites_empty_list" />
+
+        <TextView
+            android:id="@+id/emptyTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            style="@style/FavoritesPlaceholder"
+            android:text="@string/empty_list"
+            android:layout_marginTop="@dimen/spacing_md" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/placeholderErrorLoadList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@+id/favoritesToolBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/spacing_favorites_placeholder"
+        android:visibility="gone">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/emptyImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/placeholder_image_height"
+            android:layout_marginHorizontal="@dimen/spacing_md"
+            android:src="@drawable/favorites_error_load" />
+
+        <TextView
+            android:id="@+id/errorLoadTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            style="@style/FavoritesPlaceholder"
+            android:text="@string/favorites_error_load"
+            android:layout_marginTop="@dimen/spacing_md" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

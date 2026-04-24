@@ -7,6 +7,7 @@
     <dimen name="spacing_lg">20dp</dimen>
     <dimen name="spacing_xl">24dp</dimen>
     <dimen name="spacing_xxl">32dp</dimen>
+    <dimen name="spacing_favorites_placeholder">170dp</dimen>
 
     <dimen name="text_size_xs">12sp</dimen>
     <dimen name="text_size_sm">14sp</dimen>
@@ -24,5 +25,6 @@
 
     <dimen name="toolbar_height">64dp</dimen>
     <dimen name="vacancy_item_size">48dp</dimen>
+    <dimen name="placeholder_image_height">220dp</dimen>
 </resources>
 

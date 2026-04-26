@@ -7,4 +7,10 @@
     <string name="team">Команда</string>
     <string name="empty_list">Список Пуст</string>
     <string name="favorites_error_load">Не удалось получить\nсписок вакансий</string>
+    <string name="vacancy_toolbar_title">Вакансия</string>
+    <string name="no_vacancy_found_text">Вакансия не найдена или\nудалена</string>
+    <string name="vacancy_salary_bounds">от %1$s %2$s</string>
+    <string name="required_experience_title">Требуемый опыт</string>
+    <string name="vacancy_description_title">Описание вакансии</string>
+    <string name="key_skills_title">Ключевые навыки</string>
 </resources>

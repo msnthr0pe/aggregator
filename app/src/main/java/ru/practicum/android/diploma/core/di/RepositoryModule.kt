@@ -16,7 +16,10 @@ val repositoryModule = module {
 
     single<FavoritesRepository> {
         FavoritesRepositoryImpl(get())
+    }
+
     single<VacancyDetailsRepository> {
         VacancyDetailsRepositoryImpl(get())
     }
+
 }

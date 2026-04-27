@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.core.domain.favorites.interactorImpl
+package ru.practicum.android.diploma.core.domain.favorites.interactorimpl
 
 import kotlinx.coroutines.flow.Flow
 import ru.practicum.android.diploma.core.data.db.entity.VacancyEntity

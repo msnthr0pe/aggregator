@@ -25,7 +25,7 @@ val dataModule = module {
         RetrofitNetworkClient(get(), get())
     }
 
-    single< FavoritesVacancyDao> {
+    single<FavoritesVacancyDao> {
         get<AppDatabase>().favoritesDao()
     }
 }

@@ -1,10 +1,11 @@
 package ru.practicum.android.diploma.core.di
 
+import androidx.room.Room
+import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.practicum.android.diploma.core.data.db.AppDatabase
-import ru.practicum.android.diploma.core.data.db.dao.FavoritesVacancyDao
 import ru.practicum.android.diploma.core.data.network.DiplomaApi
 import ru.practicum.android.diploma.core.data.network.NetworkClient
 import ru.practicum.android.diploma.core.data.network.RetrofitNetworkClient
@@ -25,7 +26,8 @@ val dataModule = module {
         RetrofitNetworkClient(get(), get())
     }
 
-    single<FavoritesVacancyDao> {
-        get<AppDatabase>().favoritesDao()
+    single {
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .build()
     }
 }

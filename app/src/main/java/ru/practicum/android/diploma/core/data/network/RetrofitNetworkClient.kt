@@ -16,6 +16,7 @@ class RetrofitNetworkClient(
     private val context: Context
 ) : NetworkClient {
     companion object {
+        const val CODE_200 = 200
         const val CODE_400 = 400
         const val CODE_500 = 500
     }

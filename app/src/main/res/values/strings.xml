@@ -18,4 +18,7 @@
     <string name="no_internet">Нет интернета</string>
     <string name="error">Произошла ошибка</string>
     <string name="retry">Повторить</string>
+    <string name="salary_not_specified">Зарплата не указана</string>
+    <string name="salary_from">от</string>
+    <string name="salary_to">до</string>
 </resources>

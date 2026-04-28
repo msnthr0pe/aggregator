@@ -10,10 +10,11 @@ class VacancyAdapter(
     private val onVacancyClick: (VacancyDetails) -> Unit
 ) : RecyclerView.Adapter<VacancyViewHolder>() {
 
-    private var vacancies: List<VacancyDetails> = emptyList()
+    private val vacancies: MutableList<VacancyDetails> = mutableListOf()
 
     fun updateVacancies(newVacancies: List<VacancyDetails>) {
-        vacancies = newVacancies
+        vacancies.clear()
+        vacancies.addAll(newVacancies)
         notifyDataSetChanged()
     }
 

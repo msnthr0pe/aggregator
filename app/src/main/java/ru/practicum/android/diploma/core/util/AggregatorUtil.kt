@@ -1,10 +1,17 @@
 package ru.practicum.android.diploma.core.util
 
 import android.content.Context
+import android.graphics.Typeface
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.AbsoluteSizeSpan
+import android.text.style.StyleSpan
 import android.util.Log
+import android.util.TypedValue
 import android.widget.ImageView
+import android.widget.TextView
 import co.touchlab.stately.concurrency.AtomicBoolean
 import coil.ImageLoader
 import coil.decode.SvgDecoder
@@ -21,63 +28,42 @@ import ru.practicum.android.diploma.core.data.dto.area.AreaDto
 import ru.practicum.android.diploma.core.data.dto.industry.IndustryDto
 import ru.practicum.android.diploma.core.data.dto.vacancydetail.VacancyDetailDto
 import ru.practicum.android.diploma.core.domain.models.VacancyDetails
-import android.graphics.Typeface
-import android.text.SpannableStringBuilder
-import android.text.Spanned
-import android.text.style.AbsoluteSizeSpan
-import android.text.style.LeadingMarginSpan
-import android.text.style.StyleSpan
-import android.util.TypedValue
-import android.widget.TextView
-import androidx.core.text.HtmlCompat
-import androidx.core.text.getSpans
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Element
+import org.jsoup.nodes.Node
+import org.jsoup.nodes.TextNode
 
 const val DEFAULT_DEBOUNCE_DELAY = 300L
 
-fun TextView.setPrettyHtml(html: String) {
-    // 1) Базовый парсинг
-    val spanned = HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_COMPACT)
-    val ssb = SpannableStringBuilder(spanned)
+fun TextView.setPrettyHtmlByTags(html: String) {
+    val doc = Jsoup.parseBodyFragment(html)
+    val out = SpannableStringBuilder()
 
-    // 2) Соберём жирные диапазоны (обычно заголовки h2/h3 после fromHtml)
-    data class BoldRange(val text: String)
+    fun appendText(text: String) {
+        val t = text.replace('\u00A0', ' ').trim()
+        if (t.isNotBlank()) out.append(t)
+    }
 
-    val boldRanges = ssb.getSpans<StyleSpan>()
-        .filter { it.style == Typeface.BOLD }
-        .map { span ->
-            val s = ssb.getSpanStart(span).coerceAtLeast(0)
-            val e = ssb.getSpanEnd(span).coerceAtLeast(0)
-            BoldRange(ssb.substring(s, e).trim())
+    fun appendNewLine(count: Int = 1) {
+        repeat(count) {
+            if (out.isNotEmpty() && out.last() != '\n') out.append('\n')
+            else if (out.isNotEmpty()) out.append('\n')
         }
-        .filter { it.text.isNotBlank() }
-        .distinctBy { it.text }
+    }
 
-    // 3) Готовим rebuilt заранее
-    val rebuilt = SpannableStringBuilder()
-
-    fun applyHeaderStyleIfNeeded(
-        target: SpannableStringBuilder,
-        start: Int,
-        end: Int,
-        lineText: String
-    ) {
-        val trimmed = lineText.trim()
-        val isHeader = boldRanges.any { it.text == trimmed }
-        if (!isHeader) return
-
-        // Эвристика "большевизны": длиннее => h2 (22sp), короче => h3 (16sp)
-        val sizeSp = if (trimmed.length >= 18) 22 else 16
-
-        target.setSpan(
-            StyleSpan(Typeface.BOLD),
-            start, end,
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        target.setSpan(
+    fun applyHeaderSpan(start: Int, end: Int, level: Int) {
+        val sizeSp = when (level) {
+            1 -> 22f
+            2 -> 20f
+            3 -> 18f
+            else -> 16f
+        }
+        out.setSpan(StyleSpan(Typeface.BOLD), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        out.setSpan(
             AbsoluteSizeSpan(
                 TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_SP,
-                    sizeSp.toFloat(),
+                    sizeSp,
                     resources.displayMetrics
                 ).toInt()
             ),
@@ -86,60 +72,59 @@ fun TextView.setPrettyHtml(html: String) {
         )
     }
 
-    // 4) Буллеты для списков (ваш подход)
-    val text = ssb.toString()
-    val lines = text.split('\n')
+    fun walk(node: Node) {
+        when (node) {
+            is TextNode -> {
+                // обычный текст
+                appendText(node.text())
+            }
 
-    var inListBlock = false
+            is Element -> {
+                when (node.tagName().lowercase()) {
+                    "h1","h2","h3","h4","h5","h6" -> {
+                        // отступ перед заголовком
 
-    fun appendLineWithBullet(line: String) {
-        val start = rebuilt.length
-        rebuilt.append(line.trim())
-        val end = rebuilt.length
+                        val level = node.tagName().substring(1).toIntOrNull() ?: 3
+                        val start = out.length
+                        appendText(node.text())
+                        val end = out.length
+                        applyHeaderSpan(start, end, level)
 
-        val indentPx = (this.textSize * 1.6f).toInt()
-        rebuilt.setSpan(
-            LeadingMarginSpan.Standard(indentPx),
-            start, end,
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-    }
+                        //appendNewLine(1)
+                    }
 
-    lines.forEach { raw ->
-        val line = raw.trim()
-        if (line.isBlank()) return@forEach
+                    "p" -> {
+                        if (out.isNotEmpty()) appendNewLine(1)
+                        node.childNodes().forEach { walk(it) }
+                        appendNewLine(1)
+                    }
 
-        if (line.equals("Обязанности", ignoreCase = true) ||
-            line.equals("Требования", ignoreCase = true) ||
-            line.equals("Условия", ignoreCase = true)
-        ) {
-            inListBlock = true
+                    "ul" -> {
+                        if (out.isNotEmpty()) appendNewLine(1)
+                        node.children().forEach { li ->
+                            if (li.tagName().equals("li", ignoreCase = true)) {
+                                out.append("• ")
+                                appendText(li.text())
+                                appendNewLine(1)
+                            }
+                        }
+                        //appendNewLine(1)
+                    }
 
-            val start = rebuilt.length
-            rebuilt.append(line)
-            val end = rebuilt.length
-            applyHeaderStyleIfNeeded(rebuilt, start, end, line)
+                    "br" -> appendNewLine(1)
 
-            rebuilt.append("\n")
-            return@forEach
-        }
-
-        if (inListBlock) {
-            rebuilt.append("• ")
-            appendLineWithBullet(line)
-            rebuilt.append("\n")
-        } else {
-            val start = rebuilt.length
-            rebuilt.append(line)
-            val end = rebuilt.length
-            applyHeaderStyleIfNeeded(rebuilt, start, end, line)
-
-            rebuilt.append("\n\n")
+                    else -> {
+                        appendNewLine(1)
+                        node.childNodes().forEach { walk(it) }
+                    }
+                }
+            }
         }
     }
 
-    // Если вдруг rebuilt пустой — покажем базовый результат
-    this.text = if (rebuilt.isNotBlank()) rebuilt else ssb
+    doc.body().childNodes().forEach { walk(it) }
+
+    text = out
 }
 
 fun Context.hasNetwork(): Boolean {

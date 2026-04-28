@@ -78,6 +78,8 @@ dependencies {
 
     implementation(libs.androidx.activity)
 
+    implementation(libs.jsoup)
+
     testImplementation(libs.junit4)
     androidTestImplementation(libs.junit.ext)
     androidTestImplementation(libs.espresso.core)

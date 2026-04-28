@@ -1,10 +1,16 @@
 package ru.practicum.android.diploma.vacancy.ui
 
+import android.graphics.Color
 import android.os.Bundle
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.text.HtmlCompat
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -14,7 +20,7 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.domain.models.VacancyDetails
 import ru.practicum.android.diploma.core.ui.root.RootActivity
 import ru.practicum.android.diploma.core.util.loadSvgInto
-import ru.practicum.android.diploma.core.util.setPrettyHtml
+import ru.practicum.android.diploma.core.util.setPrettyHtmlByTags
 import ru.practicum.android.diploma.databinding.FragmentVacancyBinding
 import ru.practicum.android.diploma.vacancy.presentation.VacancyViewModel
 
@@ -83,7 +89,12 @@ class VacancyFragment : Fragment() {
             tag(vacancyDetails.employer.logo)
             loadSvgInto(vacancyDetails.employer.logo, vacancyCardItem.vacancyItemImg)
 
-            requiredExperienceTitle.visibility = if (vacancyDetails.experience != null) View.VISIBLE else View.GONE
+            requiredExperienceTitle.visibility = if (vacancyDetails.experience != null) {
+                View.VISIBLE
+            } else {
+                requiredExperience.visibility = View.GONE
+                View.GONE
+            }
             vacancyDetails.experience?.let {
                 requiredExperience.text = it.name
             }
@@ -92,8 +103,63 @@ class VacancyFragment : Fragment() {
             schedule.visibility = if (requiredSchedule.isEmpty()) View.GONE else View.VISIBLE
             schedule.text = requiredSchedule
 
-            vacancyDescription.setPrettyHtml(vacancyDetails.description)
+            vacancyDescription.setPrettyHtmlByTags(vacancyDetails.description)
+
+            val showSkills = vacancyDetails.skills.isNotEmpty()
+            skillsTitle.visibility = if (showSkills) View.VISIBLE else View.GONE
+            skills.visibility = if (showSkills) View.VISIBLE else View.GONE
+            var skillsText = ""
+            vacancyDetails.skills.forEach {
+                skillsText += "• $it \n"
+            }
+            skills.text = skillsText
+
+            val vacancyContacts = vacancyDetails.contacts?.phones
+            contactsTitle.visibility = if (vacancyContacts != null) View.VISIBLE else View.GONE
+            contacts.visibility = if (vacancyContacts != null) View.VISIBLE else View.GONE
+            vacancyContacts?.let {
+                contacts.setPhonesClickable(
+                    phones = it,
+                    onPhoneClick = { phone ->
+                        tag(phone)
+                    }
+                )
+            }
         }
+    }
+
+    fun TextView.setPhonesClickable(
+        phones: List<VacancyDetails.Phone>,
+        onPhoneClick: (String) -> Unit
+    ) {
+
+        var text = ""
+        phones.forEach {
+            text += "• ${it.formatted} \n"
+        }
+        val ssb = SpannableStringBuilder(text)
+
+        var start = 0
+        for (phone in phones) {
+            val end = start + phone.formatted.length
+
+            ssb.setSpan(object : ClickableSpan() {
+                override fun onClick(widget: View) {
+                    onPhoneClick(phone.formatted)
+                }
+
+                override fun updateDrawState(ds: TextPaint) {
+                    super.updateDrawState(ds)
+                    ds.isUnderlineText = false // по желанию
+                }
+            }, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+            start = end + 1
+        }
+
+        this.text = ssb
+        this.movementMethod = LinkMovementMethod.getInstance()
+        this.highlightColor = Color.TRANSPARENT
     }
 
     private fun getVacancySalary(salary: VacancyDetails.Salary, currency: String): String {

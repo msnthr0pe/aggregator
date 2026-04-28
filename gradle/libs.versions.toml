@@ -4,6 +4,7 @@ coil = "2.7.0"
 coilOkhttp = "2.6.0"
 compileSdk = "36"
 java = "VERSION_17"
+jsoup = "1.22.2"
 material = "1.13.0"
 minSdk = "26"
 targetSdk = "36"
@@ -40,6 +41,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "compiler" }
+jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 material = { module = "com.google.android.material:material", version.ref = "material" }

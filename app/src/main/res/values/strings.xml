@@ -16,4 +16,5 @@
     <string name="required_experience_title">Требуемый опыт</string>
     <string name="vacancy_description_title">Описание вакансии</string>
     <string name="key_skills_title">Ключевые навыки</string>
+    <string name="contacts">Контакты</string>
 </resources>

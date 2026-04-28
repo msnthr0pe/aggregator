@@ -97,7 +97,6 @@
                 android:id="@+id/skills_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_xxl"
                 style="@style/SubtitleText"
                 android:text="@string/key_skills_title"
                 app:layout_constraintStart_toStartOf="@+id/vacancy_description"
@@ -105,13 +104,35 @@
 
             <TextView
                 android:id="@+id/skills"
+                style="@style/SmallText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_md"
-                style="@style/SmallText"
                 android:text="Несколько навыков"
                 app:layout_constraintStart_toStartOf="@+id/skills_title"
-                app:layout_constraintTop_toBottomOf="@+id/skills_title"/>
+                app:layout_constraintTop_toBottomOf="@+id/skills_title" />
+
+            <TextView
+                android:id="@+id/contacts_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                style="@style/SubtitleText"
+                android:text="@string/contacts"
+                app:layout_constraintStart_toStartOf="@+id/skills"
+                app:layout_constraintTop_toBottomOf="@+id/skills" />
+
+            <TextView
+                android:id="@+id/contacts"
+                style="@style/SmallText"
+                android:autoLink="phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/spacing_md"
+                android:text="Несколько контактов"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/contacts_title"
+                app:layout_constraintTop_toBottomOf="@+id/contacts_title" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>

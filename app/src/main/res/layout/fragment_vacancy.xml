@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_xs"
                 style="@style/SmallText"
-                android:text="От 1 года до 3 лет"
+                android:text="От 1 года до 4 лет"
                 app:layout_constraintStart_toStartOf="@+id/required_experience_title"
                 app:layout_constraintTop_toBottomOf="@+id/required_experience_title" />
 
@@ -84,24 +84,14 @@
                 app:layout_constraintTop_toBottomOf="@+id/required_experience" />
 
             <TextView
-                android:id="@+id/vacancy_description_title"
+                android:id="@+id/vacancy_description"
+                style="@style/SmallText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_xxl"
-                style="@style/SubtitleText"
-                android:text="@string/vacancy_description_title"
+                android:text="Длинное описание, которое надо парсить"
                 app:layout_constraintStart_toStartOf="@+id/schedule"
                 app:layout_constraintTop_toBottomOf="@+id/schedule" />
-
-            <TextView
-                android:id="@+id/vacancy_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_md"
-                style="@style/SmallText"
-                android:text="Длинное описание, которое надо парсить"
-                app:layout_constraintStart_toStartOf="@+id/vacancy_description_title"
-                app:layout_constraintTop_toBottomOf="@+id/vacancy_description_title"/>
 
             <TextView
                 android:id="@+id/skills_title"

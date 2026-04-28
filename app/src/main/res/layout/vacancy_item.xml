@@ -14,6 +14,7 @@
         android:src="@drawable/vacancy_placeholder"
         android:background="@color/white"
         android:layout_marginEnd="@dimen/spacing_12"
+        android:scaleType="fitCenter"
         app:shapeAppearanceOverlay="@style/VacancyItemImg"
         style="@style/VacancyItemImg" />
 

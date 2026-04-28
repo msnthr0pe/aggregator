@@ -8,7 +8,7 @@ import ru.practicum.android.diploma.databinding.VacancyItemBinding
 
 class VacancyAdapter(
     private val onVacancyClick: (VacancyDetails) -> Unit
-): RecyclerView.Adapter<VacancyViewHolder>() {
+) : RecyclerView.Adapter<VacancyViewHolder>() {
 
     private var vacancies: List<VacancyDetails> = emptyList()
 

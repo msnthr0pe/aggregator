@@ -9,10 +9,9 @@ import ru.practicum.android.diploma.databinding.VacancyItemBinding
 
 class VacancyViewHolder(
     private val binding: VacancyItemBinding
-) : RecyclerView.ViewHolder(binding.root){
+) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(vacancy: VacancyDetails) {
-
         binding.vacancyItemTitle.text = vacancy.name
         binding.vacancyItemCompany.text = vacancy.employer.name
         binding.vacancyItemSalary.text = vacancy.formatSalary(binding.root.resources)

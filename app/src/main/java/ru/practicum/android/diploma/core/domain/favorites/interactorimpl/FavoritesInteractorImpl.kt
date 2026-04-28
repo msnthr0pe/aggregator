@@ -1,19 +1,19 @@
 package ru.practicum.android.diploma.core.domain.favorites.interactorimpl
 
 import kotlinx.coroutines.flow.Flow
-import ru.practicum.android.diploma.core.data.db.entity.VacancyEntity
 import ru.practicum.android.diploma.core.domain.favorites.interactor.FavoritesInteractor
 import ru.practicum.android.diploma.core.domain.favorites.repository.FavoritesRepository
+import ru.practicum.android.diploma.core.domain.models.VacancyDetails
 
 class FavoritesInteractorImpl(
     private val repository: FavoritesRepository
 ) : FavoritesInteractor {
 
-    override fun getAllFavorites(): Flow<List<VacancyEntity>> {
+    override fun getAllFavorites(): Flow<List<VacancyDetails>> {
         return repository.getAllFavorites()
     }
 
-    override suspend fun addToFavorites(vacancy: VacancyEntity) {
+    override suspend fun addToFavorites(vacancy: VacancyDetails) {
         repository.addToFavorites(vacancy)
     }
 
@@ -21,7 +21,7 @@ class FavoritesInteractorImpl(
         repository.removeFromFavorites(vacancyId)
     }
 
-    override suspend fun getFavoriteById(vacancyId: String): VacancyEntity? {
+    override suspend fun getFavoriteById(vacancyId: String): VacancyDetails? {
         return repository.getFavoriteById(vacancyId)
     }
 

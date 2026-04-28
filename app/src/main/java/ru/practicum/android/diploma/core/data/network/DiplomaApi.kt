@@ -61,4 +61,3 @@ interface DiplomaApi {
         @Path("id") id: String
     ): Response<VacancyDetailDto>
 }
-

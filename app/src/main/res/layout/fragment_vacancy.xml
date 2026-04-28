@@ -15,6 +15,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/spacing_md"
             android:paddingBottom="@dimen/spacing_md">
 
             <TextView
@@ -22,7 +23,6 @@
                 style="@style/TitleText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/spacing_md"
                 android:layout_marginTop="80dp"
                 android:text="Android-разработчик"
                 app:layout_constraintStart_toStartOf="parent"
@@ -41,7 +41,6 @@
                 android:id="@+id/vacancy_card"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/spacing_md"
                 android:layout_marginTop="@dimen/spacing_xl"
                 android:backgroundTint="@color/light_gray"
                 app:layout_constraintStart_toStartOf="parent"

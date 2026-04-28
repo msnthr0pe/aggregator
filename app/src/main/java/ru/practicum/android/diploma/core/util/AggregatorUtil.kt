@@ -2,8 +2,8 @@ package ru.practicum.android.diploma.core.util
 
 import android.app.Activity
 import android.content.Context
-import android.content.res.Resources
 import android.content.Intent
+import android.content.res.Resources
 import android.graphics.Typeface
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -13,9 +13,9 @@ import android.text.Spanned
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.StyleSpan
 import android.util.Log
-import android.util.TypedValue
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.net.toUri
 import co.touchlab.stately.concurrency.AtomicBoolean
 import coil.ImageLoader
 import coil.decode.SvgDecoder
@@ -26,17 +26,16 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.Headers
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Element
+import org.jsoup.nodes.Node
+import org.jsoup.nodes.TextNode
 import ru.practicum.android.diploma.BuildConfig
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.data.dto.area.AreaDto
 import ru.practicum.android.diploma.core.data.dto.industry.IndustryDto
 import ru.practicum.android.diploma.core.data.dto.vacancydetail.VacancyDetailDto
 import ru.practicum.android.diploma.core.domain.models.VacancyDetails
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Element
-import org.jsoup.nodes.Node
-import org.jsoup.nodes.TextNode
-import androidx.core.net.toUri
 
 const val DEFAULT_DEBOUNCE_DELAY = 300L
 private const val GROUP_SIZE = 3
@@ -52,51 +51,40 @@ fun TextView.setPrettyHtmlByTags(html: String) {
 
     fun appendNewLine(count: Int = 1) {
         repeat(count) {
-            if (out.isNotEmpty() && out.last() != '\n') out.append('\n')
-            else if (out.isNotEmpty()) out.append('\n')
+            if (out.isNotEmpty() && out.last() != '\n') {
+                out.append('\n')
+            } else if (out.isNotEmpty()) {
+                out.append('\n')
+            }
         }
     }
 
     fun applyHeaderSpan(start: Int, end: Int, level: Int) {
-        val sizeSp = when (level) {
-            1 -> 22f
-            2 -> 20f
-            3 -> 18f
-            else -> 16f
+        val sizePx = when (level) {
+            1 -> resources.getDimensionPixelSize(R.dimen.text_size_xl)
+            2 -> resources.getDimensionPixelSize(R.dimen.text_size_lg)
+            3 -> resources.getDimensionPixelSize(R.dimen.text_size_md)
+            else -> resources.getDimensionPixelSize(R.dimen.text_size_sm)
         }
+
         out.setSpan(StyleSpan(Typeface.BOLD), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        out.setSpan(
-            AbsoluteSizeSpan(
-                TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_SP,
-                    sizeSp,
-                    resources.displayMetrics
-                ).toInt()
-            ),
-            start, end,
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
+        out.setSpan(AbsoluteSizeSpan(sizePx), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
     }
 
     fun walk(node: Node) {
         when (node) {
             is TextNode -> {
-                // обычный текст
                 appendText(node.text())
             }
 
             is Element -> {
                 when (node.tagName().lowercase()) {
-                    "h1","h2","h3","h4","h5","h6" -> {
-                        // отступ перед заголовком
-
+                    "h1", "h2", "h3", "h4", "h5", "h6" -> {
                         val level = node.tagName().substring(1).toIntOrNull() ?: 3
                         val start = out.length
                         appendText(node.text())
                         val end = out.length
                         applyHeaderSpan(start, end, level)
-
-                        //appendNewLine(1)
                     }
 
                     "p" -> {
@@ -114,7 +102,6 @@ fun TextView.setPrettyHtmlByTags(html: String) {
                                 appendNewLine(1)
                             }
                         }
-                        //appendNewLine(1)
                     }
 
                     "br" -> appendNewLine(1)
@@ -137,10 +124,9 @@ fun Context.openDialer(phone: String) {
     val uri = "tel:${Uri.encode(phone)}".toUri()
     val intent = Intent(Intent.ACTION_DIAL, uri)
 
-    // если вызываете не из Activity, а из context (например, applicationContext)
     if (this !is Activity) intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
-    startActivity(Intent.createChooser(intent, "Позвонить через"))
+    startActivity(Intent.createChooser(intent, getString(R.string.call_via)))
 }
 
 fun Context.sendEmail(email: String) {

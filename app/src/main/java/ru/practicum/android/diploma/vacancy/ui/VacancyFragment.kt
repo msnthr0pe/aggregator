@@ -13,9 +13,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import ru.practicum.android.diploma.core.util.tag
 import androidx.navigation.fragment.findNavController
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.domain.models.VacancyDetails
 import ru.practicum.android.diploma.core.ui.root.RootActivity
@@ -25,6 +24,7 @@ import ru.practicum.android.diploma.core.util.openDialer
 import ru.practicum.android.diploma.core.util.sendEmail
 import ru.practicum.android.diploma.core.util.setPrettyHtmlByTags
 import ru.practicum.android.diploma.core.util.shareVacancy
+import ru.practicum.android.diploma.core.util.tag
 import ru.practicum.android.diploma.databinding.FragmentVacancyBinding
 import ru.practicum.android.diploma.vacancy.presentation.VacancyViewModel
 
@@ -50,17 +50,17 @@ class VacancyFragment : Fragment() {
         setupUi()
         setOnClickListeners()
         setViewModelObserver()
-        // для теста
-        //viewModel.requestVacancyDetails("0003911b-6d19-3d68-bcc5-576fe288f2b9")
-        viewModel.requestVacancyDetails("000941ae-88d6-371c-977b-d80f6384a77e")
+        requestVacancyDetails()
     }
 
     private fun setViewModelObserver() {
-        viewModel.observeVacancyDetails().observe(viewLifecycleOwner) { vacancyDetails ->
-            vacancyDetails?.let {
+        viewModel.observeVacancyDetails().observe(viewLifecycleOwner) { vacancyState ->
+            tag(vacancyState)
+            vacancyState.vacancyDetails?.let {
                 updateVacancyDetails(it)
-            } ?: updateLoader(isLoading = true)
-            tag(vacancyDetails)
+                binding.toolbar.firstToolbarAction.visibility = View.VISIBLE
+                binding.toolbar.secondToolbarAction.visibility = View.VISIBLE
+            } ?: updatePlaceholderState(isLoading = true, isServerError = vacancyState.isServerError)
         }
     }
 
@@ -68,13 +68,29 @@ class VacancyFragment : Fragment() {
         with(binding) {
             vacancyCardItem.vacancyItemSalary.isVisible = false
             toolbar.title.text = rootActivity.getString(R.string.vacancy_toolbar_title)
-            toolbar.firstToolbarAction.setImageResource(R.drawable.share)
-            toolbar.secondToolbarAction.setImageResource(R.drawable.like)
+            toolbar.firstToolbarAction.apply {
+                visibility = View.GONE
+                setImageResource(R.drawable.share)
+            }
+            toolbar.secondToolbarAction.apply {
+                visibility = View.GONE
+                setImageResource(R.drawable.like)
+            }
+        }
+    }
+
+    private fun requestVacancyDetails() {
+        // На всякий оставлю тестовые id
+        // "0003911b-6d19-3d68-bcc5-576fe288f2b9"
+        // "000941ae-88d6-371c-977b-d80f6384a77e"
+        val vacancyId = requireArguments().getString("ID")
+        vacancyId?.let {
+            viewModel.requestVacancyDetails(it)
         }
     }
 
     private fun updateVacancyDetails(vacancyDetails: VacancyDetails) {
-        updateLoader(isLoading = false)
+        updatePlaceholderState(isLoading = false)
         with(binding) {
             vacancyTitle.text = vacancyDetails.name
 
@@ -108,7 +124,7 @@ class VacancyFragment : Fragment() {
                 requiredExperience.text = it.name
             }
 
-            val requiredSchedule = vacancyDetails.employment?.name?.let{"$it, "} + vacancyDetails.schedule?.name
+            val requiredSchedule = vacancyDetails.employment?.name?.let { "$it, " } + vacancyDetails.schedule?.name
             schedule.visibility = if (requiredSchedule.isEmpty()) View.GONE else View.VISIBLE
             schedule.text = requiredSchedule
 
@@ -223,18 +239,32 @@ class VacancyFragment : Fragment() {
         }
     }
 
-    private fun updateLoader(isLoading: Boolean) {
+    private fun updatePlaceholderState(isLoading: Boolean, isServerError: Boolean = false) {
         with(binding) {
             val hasNetwork = rootActivity.hasNetwork()
             progressBar.isVisible = isLoading && hasNetwork
-            toolbar.firstToolbarAction.visibility = if (isLoading) View.GONE else View.VISIBLE
-            toolbar.secondToolbarAction.visibility = if (isLoading) View.GONE else View.VISIBLE
 
             if (!hasNetwork) {
-                binding.errorPlaceholderLayout.isVisible = true
-                binding.errorVacancyPlaceholder.setImageResource(R.drawable.no_internet)
-                binding.errorVacancyPlaceholderText.setText(R.string.no_internet)
+                showNoInternetPlaceholder()
+            } else if (isServerError) {
+                showServerErrorPlaceholder()
             }
+        }
+    }
+
+    private fun showNoInternetPlaceholder() {
+        with(binding) {
+            errorPlaceholderLayout.isVisible = true
+            errorVacancyPlaceholder.setImageResource(R.drawable.no_internet)
+            errorVacancyPlaceholderText.setText(R.string.no_internet)
+        }
+    }
+
+    private fun showServerErrorPlaceholder() {
+        with(binding) {
+            errorPlaceholderLayout.isVisible = true
+            errorVacancyPlaceholder.setImageResource(R.drawable.server_error_on_vacancy)
+            errorVacancyPlaceholderText.setText(R.string.server_error)
         }
     }
 

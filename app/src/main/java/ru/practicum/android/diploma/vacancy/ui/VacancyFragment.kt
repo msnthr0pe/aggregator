@@ -159,8 +159,7 @@ class VacancyFragment : Fragment() {
                 override fun updateDrawState(ds: TextPaint) {
                     super.updateDrawState(ds)
                     ds.isUnderlineText = false
-                    // при желании можно задать цвет:
-                    // ds.color = currentTextColor
+                    ds.color = rootActivity.getColor(R.color.blue)
                 }
             }, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }

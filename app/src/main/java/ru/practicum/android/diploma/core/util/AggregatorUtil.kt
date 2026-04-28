@@ -141,6 +141,20 @@ fun Context.openDialer(phone: String) {
     startActivity(Intent.createChooser(intent, "Позвонить через"))
 }
 
+fun Context.sendEmail(email: String) {
+    val intent = Intent(Intent.ACTION_SENDTO)
+    intent.data = "mailto:".toUri()
+    intent.putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
+    startActivity(intent)
+}
+
+fun Context.shareVacancy(url: String) {
+    val intent = Intent(Intent.ACTION_SEND)
+    intent.putExtra(Intent.EXTRA_TEXT, url)
+    intent.type = "text/plain"
+    startActivity(Intent.createChooser(intent, null))
+}
+
 fun Context.hasNetwork(): Boolean {
     val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val network = connectivityManager.activeNetwork

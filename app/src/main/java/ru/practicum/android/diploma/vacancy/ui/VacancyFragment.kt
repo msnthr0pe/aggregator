@@ -22,7 +22,9 @@ import ru.practicum.android.diploma.core.ui.root.RootActivity
 import ru.practicum.android.diploma.core.util.hasNetwork
 import ru.practicum.android.diploma.core.util.loadSvgInto
 import ru.practicum.android.diploma.core.util.openDialer
+import ru.practicum.android.diploma.core.util.sendEmail
 import ru.practicum.android.diploma.core.util.setPrettyHtmlByTags
+import ru.practicum.android.diploma.core.util.shareVacancy
 import ru.practicum.android.diploma.databinding.FragmentVacancyBinding
 import ru.practicum.android.diploma.vacancy.presentation.VacancyViewModel
 
@@ -136,9 +138,14 @@ class VacancyFragment : Fragment() {
                         tag(phone)
                     },
                     onEmailClick = { email ->
+                        rootActivity.sendEmail(email)
                         tag(email)
                     }
                 )
+            }
+
+            toolbar.firstToolbarAction.setOnClickListener {
+                rootActivity.shareVacancy(vacancyDetails.url)
             }
         }
     }
@@ -181,7 +188,6 @@ class VacancyFragment : Fragment() {
             if (index != phones.lastIndex || !email.isNullOrBlank()) ssb.append("\n\n")
         }
 
-        // Email
         email?.trim()?.takeIf { it.isNotBlank() }?.let { mail ->
             addClickable(mail, onEmailClick)
         }

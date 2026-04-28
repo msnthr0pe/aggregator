@@ -1,9 +1,12 @@
 package ru.practicum.android.diploma.core.util
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Typeface
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.Uri
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.AbsoluteSizeSpan
@@ -32,6 +35,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
 import org.jsoup.nodes.TextNode
+import androidx.core.net.toUri
 
 const val DEFAULT_DEBOUNCE_DELAY = 300L
 
@@ -127,6 +131,16 @@ fun TextView.setPrettyHtmlByTags(html: String) {
     text = out
 }
 
+fun Context.openDialer(phone: String) {
+    val uri = "tel:${Uri.encode(phone)}".toUri()
+    val intent = Intent(Intent.ACTION_DIAL, uri)
+
+    // если вызываете не из Activity, а из context (например, applicationContext)
+    if (this !is Activity) intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+    startActivity(Intent.createChooser(intent, "Позвонить через"))
+}
+
 fun Context.hasNetwork(): Boolean {
     val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val network = connectivityManager.activeNetwork
@@ -142,7 +156,7 @@ fun Context.hasNetwork(): Boolean {
 fun <T> debounce(
     waitMs: Long = DEFAULT_DEBOUNCE_DELAY,
     scope: CoroutineScope,
-    destinationFunction: (T) -> Unit
+    destinationFunction: (T) -> Unit,
 ): (T) -> Unit {
     var debounceJob: Job? = null
     return { param: T ->
@@ -157,7 +171,7 @@ fun <T> debounce(
 fun clickDebounce(
     waitMs: Long = DEFAULT_DEBOUNCE_DELAY,
     scope: CoroutineScope,
-    isClickAllowed: AtomicBoolean
+    isClickAllowed: AtomicBoolean,
 ): Boolean {
     val current = isClickAllowed
     if (isClickAllowed.value) {

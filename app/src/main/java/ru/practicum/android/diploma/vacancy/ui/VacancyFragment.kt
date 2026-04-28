@@ -20,6 +20,7 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.domain.models.VacancyDetails
 import ru.practicum.android.diploma.core.ui.root.RootActivity
 import ru.practicum.android.diploma.core.util.loadSvgInto
+import ru.practicum.android.diploma.core.util.openDialer
 import ru.practicum.android.diploma.core.util.setPrettyHtmlByTags
 import ru.practicum.android.diploma.databinding.FragmentVacancyBinding
 import ru.practicum.android.diploma.vacancy.presentation.VacancyViewModel
@@ -117,10 +118,14 @@ class VacancyFragment : Fragment() {
             val vacancyContacts = vacancyDetails.contacts?.phones
             contactsTitle.visibility = if (vacancyContacts != null) View.VISIBLE else View.GONE
             contacts.visibility = if (vacancyContacts != null) View.VISIBLE else View.GONE
+            contactName.visibility = if (vacancyContacts != null) View.VISIBLE else View.GONE
             vacancyContacts?.let {
+                contactName.text = vacancyDetails.contacts.name
+
                 contacts.setPhonesClickable(
                     phones = it,
                     onPhoneClick = { phone ->
+                        rootActivity.openDialer(phone)
                         tag(phone)
                     }
                 )
@@ -132,34 +137,30 @@ class VacancyFragment : Fragment() {
         phones: List<VacancyDetails.Phone>,
         onPhoneClick: (String) -> Unit
     ) {
+        val ssb = SpannableStringBuilder()
 
-        var text = ""
-        phones.forEach {
-            text += "• ${it.formatted} \n"
-        }
-        val ssb = SpannableStringBuilder(text)
-
-        var start = 0
-        for (phone in phones) {
-            val end = start + phone.formatted.length
+        phones.forEachIndexed { index, phone ->
+            val start = ssb.length
+            ssb.append(phone.formatted)
+            phone.comment?.let {
+                ssb.append(it)
+            }
+            val end = ssb.length
 
             ssb.setSpan(object : ClickableSpan() {
-                override fun onClick(widget: View) {
-                    onPhoneClick(phone.formatted)
-                }
-
+                override fun onClick(widget: View) = onPhoneClick(phone.formatted)
                 override fun updateDrawState(ds: TextPaint) {
                     super.updateDrawState(ds)
-                    ds.isUnderlineText = false // по желанию
+                    ds.isUnderlineText = false
                 }
             }, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
-            start = end + 1
+            if (index != phones.lastIndex) ssb.append("\n\n")
         }
 
-        this.text = ssb
-        this.movementMethod = LinkMovementMethod.getInstance()
-        this.highlightColor = Color.TRANSPARENT
+        text = ssb
+        movementMethod = LinkMovementMethod.getInstance()
+        highlightColor = Color.TRANSPARENT
     }
 
     private fun getVacancySalary(salary: VacancyDetails.Salary, currency: String): String {

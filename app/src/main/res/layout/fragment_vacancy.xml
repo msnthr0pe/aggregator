@@ -14,7 +14,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/spacing_md">
 
             <TextView
                 android:id="@+id/vacancy_title"
@@ -123,16 +124,24 @@
                 app:layout_constraintTop_toBottomOf="@+id/skills" />
 
             <TextView
-                android:id="@+id/contacts"
+                android:id="@+id/contact_name"
                 style="@style/SmallText"
-                android:autoLink="phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="@dimen/spacing_md"
-                android:text="Несколько контактов"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="@dimen/spacing_md"
+                android:text="Имя контакта"
                 app:layout_constraintStart_toStartOf="@+id/contacts_title"
                 app:layout_constraintTop_toBottomOf="@+id/contacts_title" />
+
+            <TextView
+                android:id="@+id/contacts"
+                style="@style/SmallText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                android:text="Несколько контактов"
+                app:layout_constraintStart_toStartOf="@+id/contact_name"
+                app:layout_constraintTop_toBottomOf="@+id/contact_name" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>

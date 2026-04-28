@@ -19,6 +19,7 @@ import androidx.navigation.fragment.findNavController
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.domain.models.VacancyDetails
 import ru.practicum.android.diploma.core.ui.root.RootActivity
+import ru.practicum.android.diploma.core.util.hasNetwork
 import ru.practicum.android.diploma.core.util.loadSvgInto
 import ru.practicum.android.diploma.core.util.openDialer
 import ru.practicum.android.diploma.core.util.setPrettyHtmlByTags
@@ -39,15 +40,6 @@ class VacancyFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentVacancyBinding.inflate(inflater, container, false)
-        // для теста
-        //viewModel.requestVacancyDetails("0003911b-6d19-3d68-bcc5-576fe288f2b9")
-        viewModel.requestVacancyDetails("000941ae-88d6-371c-977b-d80f6384a77e")
-        viewModel.observeVacancyDetails().observe(viewLifecycleOwner) { vacancyDetails ->
-            vacancyDetails?.let {
-                updateVacancyDetails(it)
-            } ?: updateLoader(isLoading = true)
-            tag(vacancyDetails)
-        }
         return binding.root
     }
 
@@ -55,6 +47,19 @@ class VacancyFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupUi()
         setOnClickListeners()
+        setViewModelObserver()
+        // для теста
+        //viewModel.requestVacancyDetails("0003911b-6d19-3d68-bcc5-576fe288f2b9")
+        viewModel.requestVacancyDetails("000941ae-88d6-371c-977b-d80f6384a77e")
+    }
+
+    private fun setViewModelObserver() {
+        viewModel.observeVacancyDetails().observe(viewLifecycleOwner) { vacancyDetails ->
+            vacancyDetails?.let {
+                updateVacancyDetails(it)
+            } ?: updateLoader(isLoading = true)
+            tag(vacancyDetails)
+        }
     }
 
     private fun setupUi() {
@@ -214,9 +219,16 @@ class VacancyFragment : Fragment() {
 
     private fun updateLoader(isLoading: Boolean) {
         with(binding) {
-            progressBar.isVisible = isLoading
-            toolbar.firstToolbarAction.visibility = if(isLoading) View.GONE else View.VISIBLE
-            toolbar.secondToolbarAction.visibility = if(isLoading) View.GONE else View.VISIBLE
+            val hasNetwork = rootActivity.hasNetwork()
+            progressBar.isVisible = isLoading && hasNetwork
+            toolbar.firstToolbarAction.visibility = if (isLoading) View.GONE else View.VISIBLE
+            toolbar.secondToolbarAction.visibility = if (isLoading) View.GONE else View.VISIBLE
+
+            if (!hasNetwork) {
+                binding.errorPlaceholderLayout.isVisible = true
+                binding.errorVacancyPlaceholder.setImageResource(R.drawable.no_internet)
+                binding.errorVacancyPlaceholderText.setText(R.string.no_internet)
+            }
         }
     }
 

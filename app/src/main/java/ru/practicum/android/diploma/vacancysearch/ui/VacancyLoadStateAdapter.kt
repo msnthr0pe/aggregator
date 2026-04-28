@@ -13,7 +13,7 @@ import ru.practicum.android.diploma.R
 
 class VacancyLoadStateAdapter(
     private val retry: () -> Unit
-): LoadStateAdapter<VacancyLoadStateAdapter.ViewHolder>() {
+) : LoadStateAdapter<VacancyLoadStateAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_list_footer, parent, false)
         return ViewHolder(view, retry)

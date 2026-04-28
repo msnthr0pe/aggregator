@@ -1,18 +1,19 @@
 package ru.practicum.android.diploma.vacancysearch.data.impl
 
-import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import ru.practicum.android.diploma.core.data.dto.vacancycard.VacancyCardDto
 import ru.practicum.android.diploma.core.data.dto.vacancycard.VacancyCardRequest
 import ru.practicum.android.diploma.core.data.dto.vacancycard.VacancyCardResponse
 import ru.practicum.android.diploma.core.data.network.NetworkClient
-import ru.practicum.android.diploma.core.domain.models.VacancyCard
 import ru.practicum.android.diploma.vacancysearch.domain.api.VacancySearchRepository
 
 class VacancySearchRepositoryImpl(
     private val networkClient: NetworkClient,
 ) : VacancySearchRepository {
+    companion object {
+        const val CODE_200 = 200
+    }
+
     override fun vacancySearch(
         token: String,
         filters: Map<String, String>
@@ -21,21 +22,10 @@ class VacancySearchRepositoryImpl(
             VacancyCardRequest(token = token, filters = filters)
         )
 
-        if (payload.result != null && payload.resultCode == 200) {
+        if (payload.result != null && payload.resultCode == CODE_200) {
             emit(Result.success(payload.result))
         } else {
             emit(Result.failure(Exception(payload.resultCode.toString())))
         }
-    }
-
-    private fun convertDtoInVacancyCard(card: VacancyCardDto): VacancyCard {
-        return VacancyCard(
-            id = card.id,
-            name = card.name,
-            company = card.company,
-            city = card.city,
-            salary = card.salary,
-            logo = card.logo
-        )
     }
 }

@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.vacancysearch.ui
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,14 +8,13 @@ import android.widget.TextView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.domain.models.VacancyCard
 import ru.practicum.android.diploma.core.domain.models.VacancyCardSalary
 
 class VacancyAdapter(
     private val onClick: (VacancyCard) -> Unit
-): PagingDataAdapter<VacancyCard, VacancyAdapter.VacancyViewHolder>(UserDiffCallback) {
+) : PagingDataAdapter<VacancyCard, VacancyAdapter.VacancyViewHolder>(UserDiffCallback) {
     override fun onBindViewHolder(holder: VacancyViewHolder, position: Int) {
         val item = getItem(position)
 
@@ -45,10 +43,6 @@ class VacancyAdapter(
             title.text = createTitle(model.name, model.city)
             company.text = model.company ?: ""
             salary.text = createSalary(model.salary)
-
-
-            //        val roundedVal: Float = itemView.context.resources.getDimension(R.dimen.track_image_border_px)
-
 
 //            Glide.with(itemView)
 //                .load(model.logo)

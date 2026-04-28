@@ -1,7 +1,6 @@
 package ru.practicum.android.diploma.vacancysearch.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -112,7 +111,8 @@ class VacancySearchFragment : Fragment() {
 
     /** Обработчик клика при выборе трека */
     private fun selectVacancyHandler(vacancy: VacancyCard) {
-        findNavController().navigate(R.id.action_vacancySearchFragment_to_vacancyFragment,
+        findNavController().navigate(
+            R.id.action_vacancySearchFragment_to_vacancyFragment,
             bundleOf("ID" to vacancy.id)
         )
     }
@@ -152,7 +152,7 @@ class VacancySearchFragment : Fragment() {
         _binding?.progressBar?.visibility = View.GONE
         _binding?.placeholder?.placeholderInfo?.visibility = View.VISIBLE
 
-        val message = when(serverCode) {
+        val message = when (serverCode) {
             "-1" -> getString(R.string.no_internet)
             else -> getString(R.string.error)
         }
@@ -172,7 +172,7 @@ class VacancySearchFragment : Fragment() {
     private fun initPlaceholder(type: PlaceholderType, message: String) {
         val imgElement = _binding?.placeholder?.placeholderInfoImg
         val textElement = _binding?.placeholder?.placeholderInfoText
-        val imgUrl = when(type) {
+        val imgUrl = when (type) {
             PlaceholderType.NOTHING -> R.drawable.placeholder
             PlaceholderType.ERROR -> R.drawable.placeholder_2
             PlaceholderType.EMPTY -> R.drawable.favorites_error_load
@@ -191,7 +191,7 @@ class VacancySearchFragment : Fragment() {
 
     /** Рендер состояния страницы */
     private fun renderActivity(state: VacancySearchState) {
-        when(state) {
+        when (state) {
             is VacancySearchState.Nothing -> showNothing()
             is VacancySearchState.Empty -> showEmpty()
             is VacancySearchState.Loading -> showLoading()

@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.vacancysearch.ui
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import kotlinx.coroutines.flow.first
@@ -19,7 +18,6 @@ class VacancyPagingSource(
 ) : PagingSource<Int, VacancyCard>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, VacancyCard> {
         return try {
-
             val page = params.key ?: 1 // API страницы начинается с 1
 
             val result = vacancySearchInteractor.vacancySearch(

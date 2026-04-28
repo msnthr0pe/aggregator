@@ -48,7 +48,7 @@ class VacancySearchViewModel(
         waitMs = 2000L,
         scope = viewModelScope,
         destinationFunction = { query ->
-            if(!query.isEmpty() && query != latestSearchQuery) {
+            if (!query.isEmpty() && query != latestSearchQuery) {
                 _searchQuery.value = query
             }
 

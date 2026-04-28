@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.domain.models.VacancyCard
 import ru.practicum.android.diploma.core.domain.models.VacancyCardSalary
+import ru.practicum.android.diploma.core.util.loadSvgInto
 
 class VacancyAdapter(
     private val onClick: (VacancyCard) -> Unit
@@ -44,11 +45,7 @@ class VacancyAdapter(
             company.text = model.company ?: ""
             salary.text = createSalary(model.salary)
 
-//            Glide.with(itemView)
-//                .load(model.logo)
-//                .placeholder(R.drawable.vacancy_placeholder)
-//                //                .transform(RoundedCorners(Converter.dpToPx(roundedVal, itemView.context)))
-//                .into(img)
+            loadSvgInto(model.logo ?: "", img)
         }
 
         private fun createTitle(name: String, city: String?): String {

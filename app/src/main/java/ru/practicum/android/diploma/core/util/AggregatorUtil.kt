@@ -269,21 +269,14 @@ fun loadPicInto(context: Context, url: String, image: ImageView) {
         .into(image)
 }
 
+/** Загрузка svg иконок */
 fun loadSvgInto(url: String, image: ImageView) {
-    val imageLoader = ImageLoader.Builder(image.context)
-        .components {
-            add(SvgDecoder.Factory())
-        }
-        .build()
-
-    image.load(url, imageLoader) {
+    image.load(url) {
         placeholder(R.drawable.vacancy_placeholder)
-        headers(
-            Headers.Builder()
-                .add("User-Agent", "Mozilla/5.0 (Android)")
-                .add("Accept", "image/svg+xml,image/*,*/*;q=0.8")
-                .build()
-        )
+        error(R.drawable.vacancy_placeholder)
+        fallback(R.drawable.vacancy_placeholder) // Для пустой строки
+        addHeader("Accept", "image/svg+xml")
+        decoderFactory(SvgDecoder.Factory())
     }
 }
 

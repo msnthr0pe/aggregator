@@ -15,6 +15,7 @@ import android.text.style.StyleSpan
 import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.DimenRes
 import androidx.core.net.toUri
 import co.touchlab.stately.concurrency.AtomicBoolean
 import coil.ImageLoader
@@ -44,80 +45,122 @@ fun TextView.setPrettyHtmlByTags(html: String) {
     val doc = Jsoup.parseBodyFragment(html)
     val out = SpannableStringBuilder()
 
-    fun appendText(text: String) {
-        val t = text.replace('\u00A0', ' ').trim()
-        if (t.isNotBlank()) out.append(t)
-    }
+    val renderer = HtmlTagRenderer(
+        textView = this,
+        out = out
+    )
 
-    fun appendNewLine(count: Int = 1) {
-        repeat(count) {
-            if (out.isNotEmpty() && out.last() != '\n') {
-                out.append('\n')
-            } else if (out.isNotEmpty()) {
-                out.append('\n')
-            }
-        }
-    }
-
-    fun applyHeaderSpan(start: Int, end: Int, level: Int) {
-        val sizePx = when (level) {
-            1 -> resources.getDimensionPixelSize(R.dimen.text_size_xl)
-            2 -> resources.getDimensionPixelSize(R.dimen.text_size_lg)
-            3 -> resources.getDimensionPixelSize(R.dimen.text_size_md)
-            else -> resources.getDimensionPixelSize(R.dimen.text_size_sm)
-        }
-
-        out.setSpan(StyleSpan(Typeface.BOLD), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        out.setSpan(AbsoluteSizeSpan(sizePx), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-    }
-
-    fun walk(node: Node) {
-        when (node) {
-            is TextNode -> {
-                appendText(node.text())
-            }
-
-            is Element -> {
-                when (node.tagName().lowercase()) {
-                    "h1", "h2", "h3", "h4", "h5", "h6" -> {
-                        val level = node.tagName().substring(1).toIntOrNull() ?: 3
-                        val start = out.length
-                        appendText(node.text())
-                        val end = out.length
-                        applyHeaderSpan(start, end, level)
-                    }
-
-                    "p" -> {
-                        if (out.isNotEmpty()) appendNewLine(1)
-                        node.childNodes().forEach { walk(it) }
-                        appendNewLine(1)
-                    }
-
-                    "ul" -> {
-                        if (out.isNotEmpty()) appendNewLine(1)
-                        node.children().forEach { li ->
-                            if (li.tagName().equals("li", ignoreCase = true)) {
-                                out.append("• ")
-                                appendText(li.text())
-                                appendNewLine(1)
-                            }
-                        }
-                    }
-
-                    "br" -> appendNewLine(1)
-
-                    else -> {
-                        appendNewLine(1)
-                        node.childNodes().forEach { walk(it) }
-                    }
-                }
-            }
-        }
-    }
-
-    doc.body().childNodes().forEach { walk(it) }
+    doc.body().childNodes().forEach(renderer::render)
 
     text = out
+}
+
+private class HtmlTagRenderer(
+    private val textView: TextView,
+    private val out: SpannableStringBuilder,
+) {
+    fun render(node: Node) {
+        when (node) {
+            is TextNode -> appendNormalizedText(node.text())
+            is Element -> renderElement(node)
+            else -> renderChildren(node)
+        }
+    }
+
+    private fun renderElement(element: Element) {
+        when (element.tagName().lowercase()) {
+            "h1", "h2", "h3", "h4", "h5", "h6" -> renderHeader(element)
+            "p" -> renderParagraph(element)
+            "ul" -> renderUnorderedList(element)
+            "br" -> appendNewLine()
+            else -> renderGenericBlock(element)
+        }
+    }
+
+    private fun renderHeader(element: Element) {
+        val level = element.tagName().substring(1).toIntOrNull() ?: DEFAULT_HEADER_LEVEL
+
+        val start = out.length
+        appendNormalizedText(element.text())
+        val end = out.length
+
+        applyHeaderSpan(start, end, level)
+        // если нужно — можно добавить перевод строки после заголовка:
+        // appendNewLine()
+    }
+
+    private fun renderParagraph(element: Element) {
+        if (out.isNotEmpty()) appendNewLine()
+        renderChildren(element)
+        appendNewLine()
+    }
+
+    private fun renderUnorderedList(element: Element) {
+        if (out.isNotEmpty()) appendNewLine()
+
+        element.children()
+            .filter { it.tagName().equals("li", ignoreCase = true) }
+            .forEach { li ->
+                out.append(BULLET_PREFIX)
+                appendNormalizedText(li.text())
+                appendNewLine()
+            }
+    }
+
+    private fun renderGenericBlock(element: Element) {
+        if (out.isNotEmpty()) appendNewLine()
+        renderChildren(element)
+    }
+
+    private fun renderChildren(node: Node) {
+        node.childNodes().forEach(::render)
+    }
+
+    private fun appendNormalizedText(text: String) {
+        val normalized = text
+            .replace(NBSP, ' ')
+            .trim()
+
+        if (normalized.isNotBlank()) out.append(normalized)
+    }
+
+    private fun appendNewLine(count: Int = 1) {
+        repeat(count) { out.append('\n') }
+    }
+
+    private fun applyHeaderSpan(start: Int, end: Int, level: Int) {
+        val sizePx = textView.resources.getDimensionPixelSize(levelToDimen(level))
+
+        out.setSpan(
+            StyleSpan(Typeface.BOLD),
+            start,
+            end,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        out.setSpan(
+            AbsoluteSizeSpan(sizePx),
+            start,
+            end,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+    }
+
+    @DimenRes
+    private fun levelToDimen(level: Int): Int = when (level) {
+        LEVEL_ONE -> R.dimen.text_size_xl
+        LEVEL_TWO -> R.dimen.text_size_lg
+        LEVEL_THREE -> R.dimen.text_size_md
+        else -> R.dimen.text_size_sm
+    }
+
+    private companion object {
+        const val DEFAULT_HEADER_LEVEL = 3
+        const val NBSP = '\u00A0'
+        const val BULLET_PREFIX = "• "
+        const val LEVEL_ONE = 1
+        const val LEVEL_TWO = 2
+        const val LEVEL_THREE = 3
+    }
 }
 
 fun Context.openDialer(phone: String) {

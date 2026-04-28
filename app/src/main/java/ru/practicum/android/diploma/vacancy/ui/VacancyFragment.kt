@@ -1,16 +1,9 @@
 package ru.practicum.android.diploma.vacancy.ui
 
-import android.graphics.Color
 import android.os.Bundle
-import android.text.SpannableStringBuilder
-import android.text.Spanned
-import android.text.TextPaint
-import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -19,14 +12,20 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.domain.models.VacancyDetails
 import ru.practicum.android.diploma.core.ui.root.RootActivity
 import ru.practicum.android.diploma.core.util.hasNetwork
-import ru.practicum.android.diploma.core.util.loadSvgInto
 import ru.practicum.android.diploma.core.util.openDialer
 import ru.practicum.android.diploma.core.util.sendEmail
-import ru.practicum.android.diploma.core.util.setPrettyHtmlByTags
 import ru.practicum.android.diploma.core.util.shareVacancy
 import ru.practicum.android.diploma.core.util.tag
 import ru.practicum.android.diploma.databinding.FragmentVacancyBinding
 import ru.practicum.android.diploma.vacancy.presentation.VacancyViewModel
+import ru.practicum.android.diploma.vacancy.presentation.setContactsClickable
+import ru.practicum.android.diploma.vacancy.presentation.updateAreaName
+import ru.practicum.android.diploma.vacancy.presentation.updateCompanyLogo
+import ru.practicum.android.diploma.vacancy.presentation.updateDescription
+import ru.practicum.android.diploma.vacancy.presentation.updateEmployer
+import ru.practicum.android.diploma.vacancy.presentation.updateSalary
+import ru.practicum.android.diploma.vacancy.presentation.updateSchedule
+import ru.practicum.android.diploma.vacancy.presentation.updateTitle
 
 class VacancyFragment : Fragment() {
 
@@ -92,61 +91,54 @@ class VacancyFragment : Fragment() {
     private fun updateVacancyDetails(vacancyDetails: VacancyDetails) {
         updatePlaceholderState(isLoading = false)
         with(binding) {
-            vacancyTitle.text = vacancyDetails.name
+            vacancyTitle.updateTitle(vacancyDetails.name)
+            vacancySubtitle.updateSalary(vacancyDetails.salary)
+            vacancyCardItem.vacancyItemTitle.updateEmployer(vacancyDetails.employer.name)
+            vacancyCardItem.vacancyItemCompany.updateAreaName(vacancyDetails)
+            vacancyCardItem.vacancyItemImg.updateCompanyLogo(vacancyDetails.employer.logo)
+            schedule.updateSchedule(vacancyDetails)
+            vacancyDescription.updateDescription(vacancyDetails.description)
+            updateRequiredExperience(vacancyDetails.experience)
+            updateRequiredSkills(vacancyDetails.skills)
+            updateContacts(vacancyDetails.contacts)
+            updateToolbarActions(vacancyDetails)
+        }
+    }
 
-            vacancyDetails.salary?.let {
-                val currency = it.currency
-                vacancySubtitle.text = getVacancySalary(it, currency.orEmpty())
-            } ?: run {
-                vacancySubtitle.setText(R.string.vacancy_no_salary_bounds)
-            }
+    private fun updateRequiredExperience(experience: VacancyDetails.Experience?) {
+        binding.requiredExperienceTitle.visibility = if (experience != null) {
+            View.VISIBLE
+        } else {
+            binding.requiredExperience.visibility = View.GONE
+            View.GONE
+        }
+        experience?.let {
+            binding.requiredExperience.text = it.name
+        }
+    }
 
-            // Карточка используется в разных экранах
-            // и в разных экранах одно поле может отображать разные данные
-            // я пока что не хочу переименовывать id элементов карточки, поэтому
-            // присвоение будет выглядеть криво
-            vacancyCardItem.vacancyItemTitle.text = vacancyDetails.employer.name
+    private fun updateRequiredSkills(skills: List<String>) {
+        val showSkills = skills.isNotEmpty()
+        binding.skillsTitle.visibility = if (showSkills) View.VISIBLE else View.GONE
+        binding.skills.visibility = if (showSkills) View.VISIBLE else View.GONE
+        var skillsText = ""
+        skills.forEach {
+            skillsText += "• $it \n"
+        }
+        binding.skills.text = skillsText
+    }
 
-            // Здесь так же
-            vacancyCardItem.vacancyItemCompany.text =
-                vacancyDetails.address?.raw ?: vacancyDetails.area.name
-
-            tag(vacancyDetails.employer.logo)
-            loadSvgInto(vacancyDetails.employer.logo, vacancyCardItem.vacancyItemImg)
-
-            requiredExperienceTitle.visibility = if (vacancyDetails.experience != null) {
-                View.VISIBLE
-            } else {
-                requiredExperience.visibility = View.GONE
-                View.GONE
-            }
-            vacancyDetails.experience?.let {
-                requiredExperience.text = it.name
-            }
-
-            val requiredSchedule = vacancyDetails.employment?.name?.let { "$it, " } + vacancyDetails.schedule?.name
-            schedule.visibility = if (requiredSchedule.isEmpty()) View.GONE else View.VISIBLE
-            schedule.text = requiredSchedule
-
-            vacancyDescription.setPrettyHtmlByTags(vacancyDetails.description)
-
-            val showSkills = vacancyDetails.skills.isNotEmpty()
-            skillsTitle.visibility = if (showSkills) View.VISIBLE else View.GONE
-            skills.visibility = if (showSkills) View.VISIBLE else View.GONE
-            var skillsText = ""
-            vacancyDetails.skills.forEach {
-                skillsText += "• $it \n"
-            }
-            skills.text = skillsText
-
-            val vacancyContacts = vacancyDetails.contacts
+    private fun updateContacts(contactsForUpdate: VacancyDetails.Contacts?) {
+        with(binding) {
+            val vacancyContacts = contactsForUpdate
             contactsTitle.visibility = if (vacancyContacts != null) View.VISIBLE else View.GONE
             contacts.visibility = if (vacancyContacts != null) View.VISIBLE else View.GONE
             contactName.visibility = if (vacancyContacts != null) View.VISIBLE else View.GONE
             vacancyContacts?.let {
-                contactName.text = vacancyDetails.contacts.name
+                contactName.text = contactsForUpdate.name
 
                 contacts.setContactsClickable(
+                    context = rootActivity,
                     phones = it.phones,
                     email = it.email,
                     onPhoneClick = { phone ->
@@ -159,83 +151,12 @@ class VacancyFragment : Fragment() {
                     }
                 )
             }
-
-            toolbar.firstToolbarAction.setOnClickListener {
-                rootActivity.shareVacancy(vacancyDetails.url)
-            }
         }
     }
 
-    fun TextView.setContactsClickable(
-        phones: List<VacancyDetails.Phone>,
-        email: String?,
-        onPhoneClick: (String) -> Unit,
-        onEmailClick: (String) -> Unit,
-    ) {
-        val ssb = SpannableStringBuilder()
-
-        fun addClickable(
-            value: String,
-            onClick: (String) -> Unit
-        ) {
-            val start = ssb.length
-            ssb.append(value)
-            val end = ssb.length
-
-            ssb.setSpan(object : ClickableSpan() {
-                override fun onClick(widget: View) = onClick(value)
-                override fun updateDrawState(ds: TextPaint) {
-                    super.updateDrawState(ds)
-                    ds.isUnderlineText = false
-                    ds.color = rootActivity.getColor(R.color.blue)
-                }
-            }, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        }
-
-        // Телефоны
-        phones.forEachIndexed { index, phone ->
-            addClickable(phone.formatted, onPhoneClick)
-
-            phone.comment?.takeIf { it.isNotBlank() }?.let { comment ->
-                ssb.append(" ")
-                ssb.append(comment)
-            }
-
-            if (index != phones.lastIndex || !email.isNullOrBlank()) ssb.append("\n\n")
-        }
-
-        email?.trim()?.takeIf { it.isNotBlank() }?.let { mail ->
-            addClickable(mail, onEmailClick)
-        }
-
-        text = ssb
-        movementMethod = LinkMovementMethod.getInstance()
-        highlightColor = Color.TRANSPARENT
-    }
-
-    private fun getVacancySalary(salary: VacancyDetails.Salary, currency: String): String {
-        return when {
-            salary.from != null && salary.to != null ->
-                rootActivity.getString(
-                    R.string.vacancy_salary_bounds_from_to,
-                    salary.from.toString(),
-                    currency,
-                    salary.to.toString(),
-                    currency,
-                )
-            salary.from == null && salary.to != null ->
-                rootActivity.getString(
-                    R.string.vacancy_salary_bounds_to,
-                    salary.to.toString(),
-                    currency,
-                )
-            salary.from != null && salary.to == null ->
-                rootActivity.getString(
-                    R.string.vacancy_salary_bounds_from,
-                    salary.from.toString(),
-                    currency,
-                )
-            else -> rootActivity.getString(R.string.vacancy_no_salary_bounds)
+    private fun updateToolbarActions(vacancyDetails: VacancyDetails) {
+        binding.toolbar.firstToolbarAction.setOnClickListener {
+            rootActivity.shareVacancy(vacancyDetails.url)
         }
     }
 

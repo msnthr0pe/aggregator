@@ -66,14 +66,34 @@ fun clickDebounce(
 
 fun VacancyDetails.formatSalary(resources: Resources): String {
     val salary = this.salary
+
+    fun Int.formatWithSpaces(): String {
+        return this.toString()
+            .reversed()
+            .chunked(3)
+            .joinToString(" ")
+            .reversed()
+    }
+
     return when {
         salary == null -> resources.getString(R.string.salary_not_specified)
-        salary.from != null && salary.to != null ->
-            "${resources.getString(R.string.salary_from)} ${salary.from} ${resources.getString(R.string.salary_to)} ${salary.to} ${salary.currency ?: ""}"
-        salary.from != null ->
-            "${resources.getString(R.string.salary_from)} ${salary.from} ${salary.currency ?: ""}"
-        salary.to != null ->
-            "${resources.getString(R.string.salary_to)} ${salary.to} ${salary.currency ?: ""}"
+
+        salary.from != null && salary.to != null -> {
+            "${resources.getString(R.string.salary_from)} ${salary.from.formatWithSpaces()}" +
+                " ${resources.getString(R.string.salary_to)} ${salary.to.formatWithSpaces()}" +
+                " ${salary.currency ?: ""}"
+        }
+
+        salary.from != null -> {
+            "${resources.getString(R.string.salary_from)} ${salary.from.formatWithSpaces()}" +
+                " ${salary.currency ?: ""}"
+        }
+
+        salary.to != null -> {
+            "${resources.getString(R.string.salary_to)} ${salary.to.formatWithSpaces()}" +
+                " ${salary.currency ?: ""}"
+        }
+
         else -> resources.getString(R.string.salary_not_specified)
     }
 }

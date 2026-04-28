@@ -20,6 +20,7 @@ import ru.practicum.android.diploma.core.data.dto.vacancydetail.VacancyDetailDto
 import ru.practicum.android.diploma.core.domain.models.VacancyDetails
 
 const val DEFAULT_DEBOUNCE_DELAY = 300L
+private const val GROUP_SIZE = 3
 
 fun Context.hasNetwork(): Boolean {
     val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -71,10 +72,9 @@ fun VacancyDetails.formatSalary(resources: Resources): String {
     val currency = salary?.currency.orEmpty()
 
     fun Int.formatWithSpaces(): String {
-        val groupSize = 3
         return this.toString()
             .reversed()
-            .chunked(groupSize)
+            .chunked(GROUP_SIZE)
             .joinToString(" ")
             .reversed()
     }

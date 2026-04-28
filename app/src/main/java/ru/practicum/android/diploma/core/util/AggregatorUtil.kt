@@ -1,6 +1,7 @@
 package ru.practicum.android.diploma.core.util
 
 import android.content.Context
+import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
@@ -12,12 +13,14 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.BuildConfig
+import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.data.dto.area.AreaDto
 import ru.practicum.android.diploma.core.data.dto.industry.IndustryDto
 import ru.practicum.android.diploma.core.data.dto.vacancydetail.VacancyDetailDto
 import ru.practicum.android.diploma.core.domain.models.VacancyDetails
 
 const val DEFAULT_DEBOUNCE_DELAY = 300L
+private const val GROUP_SIZE = 3
 
 fun Context.hasNetwork(): Boolean {
     val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -60,6 +63,39 @@ fun clickDebounce(
         }
     }
     return current.value
+}
+
+fun VacancyDetails.formatSalary(resources: Resources): String {
+    val salary = this.salary
+    val fromText = resources.getString(R.string.salary_from)
+    val toText = resources.getString(R.string.salary_to)
+    val currency = salary?.currency.orEmpty()
+
+    fun Int.formatWithSpaces(): String {
+        return this.toString()
+            .reversed()
+            .chunked(GROUP_SIZE)
+            .joinToString(" ")
+            .reversed()
+    }
+
+    return when {
+        salary == null -> resources.getString(R.string.salary_not_specified)
+
+        salary.from != null && salary.to != null -> {
+            "$fromText ${salary.from.formatWithSpaces()} $toText ${salary.to.formatWithSpaces()} $currency"
+        }
+
+        salary.from != null -> {
+            "$fromText ${salary.from.formatWithSpaces()} $currency"
+        }
+
+        salary.to != null -> {
+            "$toText ${salary.to.formatWithSpaces()} $currency"
+        }
+
+        else -> resources.getString(R.string.salary_not_specified)
+    }
 }
 
 fun loadPicInto(context: Context, url: String, image: ImageView) {

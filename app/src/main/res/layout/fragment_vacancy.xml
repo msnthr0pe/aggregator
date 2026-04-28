@@ -14,14 +14,15 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/spacing_md"
+            android:paddingBottom="@dimen/spacing_md">
 
             <TextView
                 android:id="@+id/vacancy_title"
                 style="@style/TitleText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/spacing_md"
                 android:layout_marginTop="80dp"
                 android:text="Android-разработчик"
                 app:layout_constraintStart_toStartOf="parent"
@@ -40,7 +41,6 @@
                 android:id="@+id/vacancy_card"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/spacing_md"
                 android:layout_marginTop="@dimen/spacing_xl"
                 android:backgroundTint="@color/light_gray"
                 app:layout_constraintStart_toStartOf="parent"
@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_xs"
                 style="@style/SmallText"
-                android:text="От 1 года до 3 лет"
+                android:text="От 1 года до 4 лет"
                 app:layout_constraintStart_toStartOf="@+id/required_experience_title"
                 app:layout_constraintTop_toBottomOf="@+id/required_experience_title" />
 
@@ -84,30 +84,19 @@
                 app:layout_constraintTop_toBottomOf="@+id/required_experience" />
 
             <TextView
-                android:id="@+id/vacancy_description_title"
+                android:id="@+id/vacancy_description"
+                style="@style/SmallText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_xxl"
-                style="@style/SubtitleText"
-                android:text="@string/vacancy_description_title"
+                android:text="Длинное описание, которое надо парсить"
                 app:layout_constraintStart_toStartOf="@+id/schedule"
                 app:layout_constraintTop_toBottomOf="@+id/schedule" />
-
-            <TextView
-                android:id="@+id/vacancy_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_md"
-                style="@style/SmallText"
-                android:text="Длинное описание, которое надо парсить"
-                app:layout_constraintStart_toStartOf="@+id/vacancy_description_title"
-                app:layout_constraintTop_toBottomOf="@+id/vacancy_description_title"/>
 
             <TextView
                 android:id="@+id/skills_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_xxl"
                 style="@style/SubtitleText"
                 android:text="@string/key_skills_title"
                 app:layout_constraintStart_toStartOf="@+id/vacancy_description"
@@ -115,13 +104,43 @@
 
             <TextView
                 android:id="@+id/skills"
+                style="@style/SmallText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_md"
-                style="@style/SmallText"
                 android:text="Несколько навыков"
                 app:layout_constraintStart_toStartOf="@+id/skills_title"
-                app:layout_constraintTop_toBottomOf="@+id/skills_title"/>
+                app:layout_constraintTop_toBottomOf="@+id/skills_title" />
+
+            <TextView
+                android:id="@+id/contacts_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                style="@style/SubtitleText"
+                android:text="@string/contacts"
+                app:layout_constraintStart_toStartOf="@+id/skills"
+                app:layout_constraintTop_toBottomOf="@+id/skills" />
+
+            <TextView
+                android:id="@+id/contact_name"
+                style="@style/SmallText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                android:text="Имя контакта"
+                app:layout_constraintStart_toStartOf="@+id/contacts_title"
+                app:layout_constraintTop_toBottomOf="@+id/contacts_title" />
+
+            <TextView
+                android:id="@+id/contacts"
+                style="@style/SmallText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                android:text="Несколько контактов"
+                app:layout_constraintStart_toStartOf="@+id/contact_name"
+                app:layout_constraintTop_toBottomOf="@+id/contact_name" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>
@@ -133,7 +152,7 @@
         android:layout_height="wrap_content" />
 
     <LinearLayout
-        android:id="@+id/error_placeholder"
+        android:id="@+id/error_placeholder_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="64dp"
@@ -143,11 +162,13 @@
         android:visibility="gone">
 
         <ImageView
+            android:id="@+id/error_vacancy_placeholder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/vacancy_not_found" />
 
         <TextView
+            android:id="@+id/error_vacancy_placeholder_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/SubtitleText"

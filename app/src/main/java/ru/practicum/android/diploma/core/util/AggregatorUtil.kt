@@ -2,6 +2,7 @@ package ru.practicum.android.diploma.core.util
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.Resources
 import android.content.Intent
 import android.graphics.Typeface
 import android.net.ConnectivityManager
@@ -38,6 +39,7 @@ import org.jsoup.nodes.TextNode
 import androidx.core.net.toUri
 
 const val DEFAULT_DEBOUNCE_DELAY = 300L
+private const val GROUP_SIZE = 3
 
 fun TextView.setPrettyHtmlByTags(html: String) {
     val doc = Jsoup.parseBodyFragment(html)
@@ -196,6 +198,39 @@ fun clickDebounce(
         }
     }
     return current.value
+}
+
+fun VacancyDetails.formatSalary(resources: Resources): String {
+    val salary = this.salary
+    val fromText = resources.getString(R.string.salary_from)
+    val toText = resources.getString(R.string.salary_to)
+    val currency = salary?.currency.orEmpty()
+
+    fun Int.formatWithSpaces(): String {
+        return this.toString()
+            .reversed()
+            .chunked(GROUP_SIZE)
+            .joinToString(" ")
+            .reversed()
+    }
+
+    return when {
+        salary == null -> resources.getString(R.string.salary_not_specified)
+
+        salary.from != null && salary.to != null -> {
+            "$fromText ${salary.from.formatWithSpaces()} $toText ${salary.to.formatWithSpaces()} $currency"
+        }
+
+        salary.from != null -> {
+            "$fromText ${salary.from.formatWithSpaces()} $currency"
+        }
+
+        salary.to != null -> {
+            "$toText ${salary.to.formatWithSpaces()} $currency"
+        }
+
+        else -> resources.getString(R.string.salary_not_specified)
+    }
 }
 
 fun loadPicInto(context: Context, url: String, image: ImageView) {

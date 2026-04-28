@@ -10,7 +10,7 @@ import ru.practicum.android.diploma.core.data.db.entity.VacancyEntity
 @Dao
 interface FavoritesVacancyDao {
 
-    @Query("SELECT * FROM vacancy_table")
+    @Query("SELECT * FROM vacancy_table ORDER BY addedAt DESC")
     fun getAllFavorites(): Flow<List<VacancyEntity>>
 
     @Query("SELECT * FROM vacancy_table WHERE id = :vacancyId")

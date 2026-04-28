@@ -10,21 +10,8 @@ class VacancySearchInteractorImpl(
 ) : VacancySearchInteractor {
     override fun vacancySearch(
         token: String,
-        area: Int?,
-        industry: Int?,
-        text: String?,
-        salary: Int?,
-        page: Int?,
-        onlyWithSalary: Boolean?
+        filters: Map<String, String>
     ): Flow<Result<VacancyCardResponse>> {
-        return repository.vacancySearch(
-            token = token,
-            area = area,
-            industry = industry,
-            text = text,
-            salary = salary,
-            page = page,
-            onlyWithSalary = onlyWithSalary
-        )
+        return repository.vacancySearch(token = token, filters = filters)
     }
 }

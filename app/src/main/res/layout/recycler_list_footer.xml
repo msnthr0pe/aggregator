@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/recycler_vacancy_footer_height">
+
+    <ProgressBar
+        android:id="@+id/recyclerListLoader"
+        android:layout_width="@dimen/progress_bar_size"
+        android:layout_height="@dimen/progress_bar_size"
+        android:layout_gravity="center"
+        style="@style/SearchProgressBar" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/recyclerListRetry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/retry"
+        android:visibility="gone"
+        style="@style/ButtonFind" />
+</FrameLayout>

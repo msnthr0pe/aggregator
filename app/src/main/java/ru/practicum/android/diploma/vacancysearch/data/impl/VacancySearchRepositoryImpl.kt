@@ -2,6 +2,7 @@ package ru.practicum.android.diploma.vacancysearch.data.impl
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import ru.practicum.android.diploma.core.data.dto.vacancycard.VacancyCardRequest
 import ru.practicum.android.diploma.core.data.dto.vacancycard.VacancyCardResponse
 import ru.practicum.android.diploma.core.data.network.NetworkClient
 import ru.practicum.android.diploma.vacancysearch.domain.api.VacancySearchRepository
@@ -9,37 +10,22 @@ import ru.practicum.android.diploma.vacancysearch.domain.api.VacancySearchReposi
 class VacancySearchRepositoryImpl(
     private val networkClient: NetworkClient,
 ) : VacancySearchRepository {
+    companion object {
+        const val CODE_200 = 200
+    }
+
     override fun vacancySearch(
         token: String,
-        area: Int?,
-        industry: Int?,
-        text: String?,
-        salary: Int?,
-        page: Int?,
-        onlyWithSalary: Boolean?
+        filters: Map<String, String>
     ): Flow<Result<VacancyCardResponse>> = flow {
-//        val payload = networkClient.doRequest<List<AreaDto>>(AreaRequest(token = "Bearer $token"))
-//        val payload = networkClient.doRequest<List<IndustryDto>>(IndustryRequest(token = "Bearer $token"))
+        val payload = networkClient.doRequest<VacancyCardResponse>(
+            VacancyCardRequest(token = token, filters = filters)
+        )
 
-        // Тестовый запрос ()
-//        val payload = networkClient.doRequest<VacancyCardResponse>(VacancyCardRequest(
-//            token = "Bearer $token",
-//            area = area,
-//            industry = industry,
-//            text = text,
-//            salary = salary,
-//            page = page,
-//            onlyWithSalary = onlyWithSalary
-//        ))
-
-//        val payload = networkClient.doRequest<List<VacancyDetailDto>>(VacancyDetailRequest(
-//            token = "Bearer $token",
-//            id = "123321"
-//        ))
-//
-//        if(payload.result != null) {
-//            Log.i("TEEEST123", payload.result.toString())
-//            Log.i("TEEEST123", payload.resultCode.toString())
-//        }
+        if (payload.result != null && payload.resultCode == CODE_200) {
+            emit(Result.success(payload.result))
+        } else {
+            emit(Result.failure(Exception(payload.resultCode.toString())))
+        }
     }
 }

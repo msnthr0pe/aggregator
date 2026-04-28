@@ -19,15 +19,6 @@ fun TextView.updateTitle(title: String) {
     text = title
 }
 
-fun TextView.updateSalary(salary: VacancyDetails.Salary?) {
-    salary?.let {
-        val currency = it.currency
-        text = getVacancySalary(this.context, it, currency.orEmpty())
-    } ?: run {
-        setText(R.string.vacancy_no_salary_bounds)
-    }
-}
-
 fun TextView.updateEmployer(employerName: String) {
     // Карточка используется в разных экранах
     // и в разных экранах одно поле может отображать разные данные
@@ -43,32 +34,6 @@ fun TextView.updateAreaName(vacancyDetails: VacancyDetails) {
 
 fun ImageView.updateCompanyLogo(logoPath: String) {
     loadSvgInto(logoPath, this)
-}
-
-private fun getVacancySalary(context: Context, salary: VacancyDetails.Salary, currency: String): String {
-    return when {
-        salary.from != null && salary.to != null ->
-            context.getString(
-                R.string.vacancy_salary_bounds_from_to,
-                salary.from.toString(),
-                currency,
-                salary.to.toString(),
-                currency,
-            )
-        salary.from == null && salary.to != null ->
-            context.getString(
-                R.string.vacancy_salary_bounds_to,
-                salary.to.toString(),
-                currency,
-            )
-        salary.from != null && salary.to == null ->
-            context.getString(
-                R.string.vacancy_salary_bounds_from,
-                salary.from.toString(),
-                currency,
-            )
-        else -> context.getString(R.string.vacancy_no_salary_bounds)
-    }
 }
 
 fun TextView.updateSchedule(vacancyDetails: VacancyDetails) {

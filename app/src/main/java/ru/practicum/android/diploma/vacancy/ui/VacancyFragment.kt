@@ -11,6 +11,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.domain.models.VacancyDetails
 import ru.practicum.android.diploma.core.ui.root.RootActivity
+import ru.practicum.android.diploma.core.util.formatSalary
 import ru.practicum.android.diploma.core.util.hasNetwork
 import ru.practicum.android.diploma.core.util.openDialer
 import ru.practicum.android.diploma.core.util.sendEmail
@@ -23,7 +24,6 @@ import ru.practicum.android.diploma.vacancy.presentation.updateAreaName
 import ru.practicum.android.diploma.vacancy.presentation.updateCompanyLogo
 import ru.practicum.android.diploma.vacancy.presentation.updateDescription
 import ru.practicum.android.diploma.vacancy.presentation.updateEmployer
-import ru.practicum.android.diploma.vacancy.presentation.updateSalary
 import ru.practicum.android.diploma.vacancy.presentation.updateSchedule
 import ru.practicum.android.diploma.vacancy.presentation.updateTitle
 
@@ -79,9 +79,6 @@ class VacancyFragment : Fragment() {
     }
 
     private fun requestVacancyDetails() {
-        // На всякий оставлю тестовые id
-        // "0003911b-6d19-3d68-bcc5-576fe288f2b9"
-        // "000941ae-88d6-371c-977b-d80f6384a77e"
         val vacancyId = requireArguments().getString("ID")
         vacancyId?.let {
             viewModel.requestVacancyDetails(it)
@@ -92,7 +89,7 @@ class VacancyFragment : Fragment() {
         updatePlaceholderState(isLoading = false)
         with(binding) {
             vacancyTitle.updateTitle(vacancyDetails.name)
-            vacancySubtitle.updateSalary(vacancyDetails.salary)
+            vacancySubtitle.text = formatSalary(vacancyDetails.salary, binding.root.resources)
             vacancyCardItem.vacancyItemTitle.updateEmployer(vacancyDetails.employer.name)
             vacancyCardItem.vacancyItemCompany.updateAreaName(vacancyDetails)
             vacancyCardItem.vacancyItemImg.updateCompanyLogo(vacancyDetails.employer.logo)

@@ -18,15 +18,12 @@ import android.widget.TextView
 import androidx.annotation.DimenRes
 import androidx.core.net.toUri
 import co.touchlab.stately.concurrency.AtomicBoolean
-import coil.ImageLoader
 import coil.decode.SvgDecoder
 import coil.load
-import com.bumptech.glide.Glide
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import okhttp3.Headers
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
@@ -36,6 +33,7 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.data.dto.area.AreaDto
 import ru.practicum.android.diploma.core.data.dto.industry.IndustryDto
 import ru.practicum.android.diploma.core.data.dto.vacancydetail.VacancyDetailDto
+import ru.practicum.android.diploma.core.domain.models.VacancyCardSalary
 import ru.practicum.android.diploma.core.domain.models.VacancyDetails
 
 const val DEFAULT_DEBOUNCE_DELAY = 300L
@@ -229,8 +227,7 @@ fun clickDebounce(
     return current.value
 }
 
-fun VacancyDetails.formatSalary(resources: Resources): String {
-    val salary = this.salary
+fun formatSalary(salary: VacancyCardSalary?, resources: Resources): String {
     val fromText = resources.getString(R.string.salary_from)
     val toText = resources.getString(R.string.salary_to)
     val currency = salary?.currency.orEmpty()
@@ -262,13 +259,6 @@ fun VacancyDetails.formatSalary(resources: Resources): String {
     }
 }
 
-fun loadPicInto(context: Context, url: String, image: ImageView) {
-    Glide.with(context)
-        .load(url)
-        .fitCenter()
-        .into(image)
-}
-
 /** Загрузка svg иконок */
 fun loadSvgInto(url: String, image: ImageView) {
     image.load(url) {
@@ -292,12 +282,15 @@ fun tag(contents: Any?, tag: String = "customtag") {
     Log.d(tag, contents.toString())
 }
 
-fun VacancyDetailDto.SalaryDto.toDomain(): VacancyDetails.Salary =
-    VacancyDetails.Salary(
-        from = from,
-        to = to,
-        currency = currency,
-    )
+/**
+ * Функция для создания заголовка/названия для вакансии
+ */
+fun createTitleVacancy(name: String, city: String?): String {
+    var title = name
+    if (city != null) title += ", $city"
+
+    return title
+}
 
 fun VacancyDetailDto.AddressDto.toDomain(): VacancyDetails.Address =
     VacancyDetails.Address(

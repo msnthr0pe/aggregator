@@ -24,13 +24,13 @@ class VacancyDetailsRepositoryImpl(
             )
         )
         val result = response.result
-        if (response.resultCode == RetrofitNetworkClient.Companion.CODE_200 && result != null) {
+        if (response.resultCode == RetrofitNetworkClient.CODE_200 && result != null) {
             val info = with(result) {
                 VacancyDetails(
                     id = id,
                     name = name,
                     description = description,
-                    salary = salary?.toDomain(),
+                    salary = salary,
                     address = address?.toDomain(),
                     experience = experience?.toDomain(),
                     schedule = schedule?.toDomain(),

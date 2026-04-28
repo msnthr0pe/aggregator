@@ -3,6 +3,7 @@ package ru.practicum.android.diploma.core.data.network
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.practicum.android.diploma.core.data.dto.Response
@@ -27,19 +28,7 @@ class RetrofitNetworkClient(
 
         return when (dto) {
             is VacancyCardRequest -> {
-                val filters = mapOf(
-                    "token" to dto.token,
-                    "area" to dto.area,
-                    "industry" to dto.industry,
-                    "text" to dto.text,
-                    "salary" to dto.salary,
-                    "page" to dto.page,
-                    "onlyWithSalary" to dto.onlyWithSalary
-                )
-                handle { diplomaApi.getVacancies(
-                    token = dto.token,
-                    filters = filters,
-                ) }
+                handle { diplomaApi.getVacancies(token = dto.token, filters = dto.filters) }
             }
 
             is AreaRequest -> {

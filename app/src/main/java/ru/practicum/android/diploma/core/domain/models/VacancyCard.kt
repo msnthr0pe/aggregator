@@ -7,10 +7,4 @@ data class VacancyCard(
     val city: String?,
     val salary: VacancyCardSalary,
     val logo: String?
-) {
-    data class VacancyCardSalary(
-        val from: Int?,
-        val to: Int?,
-        val currency: String?
-    )
-}
+)

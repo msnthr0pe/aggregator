@@ -6,6 +6,7 @@ import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.Path
 import retrofit2.http.QueryMap
+import retrofit2.http.Query
 import ru.practicum.android.diploma.core.data.dto.area.AreaDto
 import ru.practicum.android.diploma.core.data.dto.industry.IndustryDto
 import ru.practicum.android.diploma.core.data.dto.vacancycard.VacancyCardResponse
@@ -50,7 +51,7 @@ interface DiplomaApi {
     @GET("vacancies")
     suspend fun getVacancies(
         @Header("Authorization") token: String,
-        @QueryMap filters: Map<String, Any?>
+        @QueryMap(encoded = true) filters: Map<String, String>
     ): Response<VacancyCardResponse>
 
     @Headers("Content-Type: application/json")

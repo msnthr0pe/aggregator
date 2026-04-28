@@ -9,4 +9,6 @@
     <string name="enter_your_query">Введите запрос</string>
     <string name="empty_list">Список Пуст</string>
     <string name="favorites_error_load">Не удалось получить\nсписок вакансий</string>
+    <string name="no_internet">Нет интернета</string>
+    <string name="error">Произошла ошибка</string>
 </resources>

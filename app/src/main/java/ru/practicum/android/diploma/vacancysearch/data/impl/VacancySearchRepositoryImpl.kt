@@ -2,8 +2,11 @@ package ru.practicum.android.diploma.vacancysearch.data.impl
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import ru.practicum.android.diploma.core.data.dto.vacancycard.VacancyCardDto
+import ru.practicum.android.diploma.core.data.dto.vacancycard.VacancyCardRequest
 import ru.practicum.android.diploma.core.data.dto.vacancycard.VacancyCardResponse
 import ru.practicum.android.diploma.core.data.network.NetworkClient
+import ru.practicum.android.diploma.core.domain.models.VacancyCard
 import ru.practicum.android.diploma.vacancysearch.domain.api.VacancySearchRepository
 
 class VacancySearchRepositoryImpl(
@@ -11,35 +14,33 @@ class VacancySearchRepositoryImpl(
 ) : VacancySearchRepository {
     override fun vacancySearch(
         token: String,
-        area: Int?,
-        industry: Int?,
-        text: String?,
-        salary: Int?,
-        page: Int?,
-        onlyWithSalary: Boolean?
+        filters: Map<String, String>
     ): Flow<Result<VacancyCardResponse>> = flow {
-//        val payload = networkClient.doRequest<List<AreaDto>>(AreaRequest(token = "Bearer $token"))
-//        val payload = networkClient.doRequest<List<IndustryDto>>(IndustryRequest(token = "Bearer $token"))
+        val payload = networkClient.doRequest<VacancyCardResponse>(
+            VacancyCardRequest(token = token, filters = filters)
+        )
 
-        // Тестовый запрос ()
-//        val payload = networkClient.doRequest<VacancyCardResponse>(VacancyCardRequest(
-//            token = "Bearer $token",
-//            area = area,
-//            industry = industry,
-//            text = text,
-//            salary = salary,
-//            page = page,
-//            onlyWithSalary = onlyWithSalary
-//        ))
+        if (payload.result != null && payload.resultCode == 200) {
+//            val convertVal = VacancyCardResponse(
+//                found = payload.result.found,
+//                pages = payload.result.pages,
+//                page = payload.result.page,
+//                items = payload.result.items
+//            )
+            emit(Result.success(payload.result))
+        } else {
+            emit(Result.failure(Exception(payload.resultCode.toString())))
+        }
+    }
 
-//        val payload = networkClient.doRequest<List<VacancyDetailDto>>(VacancyDetailRequest(
-//            token = "Bearer $token",
-//            id = "123321"
-//        ))
-//
-//        if(payload.result != null) {
-//            Log.i("TEEEST123", payload.result.toString())
-//            Log.i("TEEEST123", payload.resultCode.toString())
-//        }
+    private fun convertDtoInVacancyCard(card: VacancyCardDto): VacancyCard {
+        return VacancyCard(
+            id = card.id,
+            name = card.name,
+            company = card.company,
+            city = card.city,
+            salary = card.salary,
+            logo = card.logo
+        )
     }
 }

@@ -7,11 +7,6 @@ import ru.practicum.android.diploma.core.data.dto.vacancycard.VacancyCardRespons
 interface VacancySearchInteractor {
     fun vacancySearch(
         token: String,
-        area: Int? = null,
-        industry: Int? = null,
-        text: String? = null,
-        salary: Int? = null,
-        page: Int? = null,
-        onlyWithSalary: Boolean? = null,
+        filters: Map<String, String>
     ): Flow<Result<VacancyCardResponse>>
 }

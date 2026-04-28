@@ -40,7 +40,8 @@ class VacancyFragment : Fragment() {
     ): View {
         _binding = FragmentVacancyBinding.inflate(inflater, container, false)
         // для теста
-        viewModel.requestVacancyDetails("0003911b-6d19-3d68-bcc5-576fe288f2b9")
+        //viewModel.requestVacancyDetails("0003911b-6d19-3d68-bcc5-576fe288f2b9")
+        viewModel.requestVacancyDetails("000941ae-88d6-371c-977b-d80f6384a77e")
         viewModel.observeVacancyDetails().observe(viewLifecycleOwner) { vacancyDetails ->
             vacancyDetails?.let {
                 updateVacancyDetails(it)
@@ -115,47 +116,70 @@ class VacancyFragment : Fragment() {
             }
             skills.text = skillsText
 
-            val vacancyContacts = vacancyDetails.contacts?.phones
+            val vacancyContacts = vacancyDetails.contacts
             contactsTitle.visibility = if (vacancyContacts != null) View.VISIBLE else View.GONE
             contacts.visibility = if (vacancyContacts != null) View.VISIBLE else View.GONE
             contactName.visibility = if (vacancyContacts != null) View.VISIBLE else View.GONE
             vacancyContacts?.let {
                 contactName.text = vacancyDetails.contacts.name
 
-                contacts.setPhonesClickable(
-                    phones = it,
+                contacts.setContactsClickable(
+                    phones = it.phones,
+                    email = it.email,
                     onPhoneClick = { phone ->
                         rootActivity.openDialer(phone)
                         tag(phone)
+                    },
+                    onEmailClick = { email ->
+                        tag(email)
                     }
                 )
             }
         }
     }
 
-    fun TextView.setPhonesClickable(
+    fun TextView.setContactsClickable(
         phones: List<VacancyDetails.Phone>,
-        onPhoneClick: (String) -> Unit
+        email: String?,
+        onPhoneClick: (String) -> Unit,
+        onEmailClick: (String) -> Unit,
     ) {
         val ssb = SpannableStringBuilder()
 
-        phones.forEachIndexed { index, phone ->
+        fun addClickable(
+            value: String,
+            onClick: (String) -> Unit
+        ) {
             val start = ssb.length
-            ssb.append(phone.formatted)
-            phone.comment?.let {
-                ssb.append(it)
-            }
+            ssb.append(value)
             val end = ssb.length
 
             ssb.setSpan(object : ClickableSpan() {
-                override fun onClick(widget: View) = onPhoneClick(phone.formatted)
+                override fun onClick(widget: View) = onClick(value)
                 override fun updateDrawState(ds: TextPaint) {
                     super.updateDrawState(ds)
                     ds.isUnderlineText = false
+                    // при желании можно задать цвет:
+                    // ds.color = currentTextColor
                 }
             }, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
 
-            if (index != phones.lastIndex) ssb.append("\n\n")
+        // Телефоны
+        phones.forEachIndexed { index, phone ->
+            addClickable(phone.formatted, onPhoneClick)
+
+            phone.comment?.takeIf { it.isNotBlank() }?.let { comment ->
+                ssb.append(" ")
+                ssb.append(comment)
+            }
+
+            if (index != phones.lastIndex || !email.isNullOrBlank()) ssb.append("\n\n")
+        }
+
+        // Email
+        email?.trim()?.takeIf { it.isNotBlank() }?.let { mail ->
+            addClickable(mail, onEmailClick)
         }
 
         text = ssb

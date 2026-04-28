@@ -9,6 +9,10 @@ import ru.practicum.android.diploma.core.domain.models.VacancyCard
 import ru.practicum.android.diploma.vacancysearch.domain.api.VacancySearchInteractor
 import java.io.IOException
 
+/**
+ *
+ * При первой загрузке прогружает сразу 40 элементов (делает 2 запроса)
+ * */
 class VacancyPagingSource(
     val vacancySearchInteractor: VacancySearchInteractor,
     val filters: Map<String, String>
@@ -17,16 +21,15 @@ class VacancyPagingSource(
         return try {
 
             val page = params.key ?: 1 // API страницы начинается с 1
+
             val result = vacancySearchInteractor.vacancySearch(
                 token = "Bearer ${BuildConfig.API_ACCESS_TOKEN}",
-                filters = filters
+                filters = filters + ("page" to page.toString())
             ).first()
 
             return if (result.isSuccess) {
                 val response = result.getOrNull()
                 val vacancies = response?.items ?: emptyList()
-
-                Log.i("TEEEEEEST_123", vacancies.size.toString())
 
                 LoadResult.Page(
                     data = vacancies,

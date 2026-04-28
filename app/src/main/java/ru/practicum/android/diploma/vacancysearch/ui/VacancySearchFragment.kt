@@ -10,8 +10,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.paging.LoadState
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -41,19 +40,22 @@ class VacancySearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.recyclerList.adapter = vacancyAdapter
-
-        lifecycleScope.launch {
-            viewModel.items.collectLatest { pagingData ->
-                vacancyAdapter.submitData(pagingData)
-            }
-        }
+        binding.recyclerList.adapter = vacancyAdapter.withLoadStateFooter(
+            footer = VacancyLoadStateAdapter { vacancyAdapter.retry() }
+        )
 
         viewModel.observePage().observe(viewLifecycleOwner) {
             renderActivity(it)
         }
 
+        val toolbar = binding.btnBack.menu.findItem(R.id.toolbar_filter)
+        toolbar.setOnMenuItemClickListener {
+            findNavController().navigate(R.id.action_vacancySearchFragment_to_filtersFragment)
+            true
+        }
+
         initSearch()
+        initVacancyList()
     }
 
     override fun onDestroyView() {
@@ -64,7 +66,7 @@ class VacancySearchFragment : Fragment() {
     /** Инициализация поисковика */
     private fun initSearch() {
         _binding?.search?.doOnTextChanged { text, _, _, _ ->
-            viewModel.onSearchQueryChanged(text.toString().trim())
+            viewModel.onSearchDebounce(text.toString().trim())
         }
 
         _binding?.searchWrapper?.setEndIconOnClickListener {
@@ -72,21 +74,55 @@ class VacancySearchFragment : Fragment() {
         }
     }
 
+    /** Инициализация списка вакансий */
+    private fun initVacancyList() {
+        // Сбор данных
+        lifecycleScope.launch {
+            viewModel.items.collectLatest { pagingData ->
+                vacancyAdapter.submitData(pagingData)
+            }
+        }
+
+        // Обработка для заглушек
+        lifecycleScope.launch {
+            vacancyAdapter.loadStateFlow.collectLatest { loadStates ->
+                val isFirstLoading = loadStates.refresh is LoadState.Loading
+                val isListEmpty = vacancyAdapter.itemCount == 0
+                val hasError = loadStates.refresh is LoadState.Error
+
+                if (hasError) {
+                    val refreshState = loadStates.refresh
+                    var errorMessage = "500"
+
+                    if (refreshState is LoadState.Error) {
+                        errorMessage = refreshState.error.message.toString()
+                    }
+
+                    viewModel.updatePageLiveData(VacancySearchState.Error(errorMessage))
+                } else if (isFirstLoading) {
+                    viewModel.updatePageLiveData(VacancySearchState.Loading)
+                } else if (isListEmpty) {
+                    viewModel.updatePageLiveData(VacancySearchState.Empty)
+                } else {
+                    viewModel.updatePageLiveData(VacancySearchState.Success)
+                }
+            }
+        }
+    }
+
     /** Обработчик клика при выборе трека */
     private fun selectVacancyHandler(vacancy: VacancyCard) {
-        Log.i("TEST", vacancy.toString())
-//        if (clickDebounce()) {
-//            findNavController().navigate(R.id.action_searchFragment_to_playerFragment,
-//                bundleOf(PlayerFragment.EXTRA_TRACK_KEY to track))
-//        }
+        findNavController().navigate(R.id.action_vacancySearchFragment_to_vacancyFragment,
+            bundleOf("ID" to vacancy.id)
+        )
     }
 
     /** Изначальное отображение страницы */
     private fun showNothing() {
-        _binding?.recyclerList?.visibility = View.VISIBLE // TODO: ПОМЕНЯТЬ
+        _binding?.recyclerList?.visibility = View.GONE
         _binding?.buttonCount?.visibility = View.GONE
         _binding?.progressBar?.visibility = View.GONE
-        _binding?.placeholder?.placeholderInfo?.visibility = View.GONE
+        _binding?.placeholder?.placeholderInfo?.visibility = View.VISIBLE
 
         initPlaceholder(PlaceholderType.NOTHING, "")
     }
@@ -125,13 +161,11 @@ class VacancySearchFragment : Fragment() {
     }
 
     /** Отображение списка вакансий */
-    private fun showSuccess(list: List<VacancyCard>) {
+    private fun showSuccess() {
         _binding?.recyclerList?.visibility = View.VISIBLE
         _binding?.buttonCount?.visibility = View.GONE
         _binding?.progressBar?.visibility = View.GONE
         _binding?.placeholder?.placeholderInfo?.visibility = View.GONE
-
-//        vacancyAdapter.setList(list)
     }
 
     /** Отрисовка placeholder */
@@ -162,7 +196,7 @@ class VacancySearchFragment : Fragment() {
             is VacancySearchState.Empty -> showEmpty()
             is VacancySearchState.Loading -> showLoading()
             is VacancySearchState.Error -> showError(state.serverCode)
-            is VacancySearchState.Success -> showSuccess(state.data)
+            is VacancySearchState.Success -> showSuccess()
         }
     }
 }

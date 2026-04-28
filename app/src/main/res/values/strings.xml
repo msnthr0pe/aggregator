@@ -17,4 +17,5 @@
     <string name="key_skills_title">Ключевые навыки</string>
     <string name="no_internet">Нет интернета</string>
     <string name="error">Произошла ошибка</string>
+    <string name="retry">Повторить</string>
 </resources>

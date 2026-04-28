@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.vacancysearch.data.impl
 
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import ru.practicum.android.diploma.core.data.dto.vacancycard.VacancyCardDto
@@ -21,12 +22,6 @@ class VacancySearchRepositoryImpl(
         )
 
         if (payload.result != null && payload.resultCode == 200) {
-//            val convertVal = VacancyCardResponse(
-//                found = payload.result.found,
-//                pages = payload.result.pages,
-//                page = payload.result.page,
-//                items = payload.result.items
-//            )
             emit(Result.success(payload.result))
         } else {
             emit(Result.failure(Exception(payload.resultCode.toString())))

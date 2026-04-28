@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.vacancysearch.ui
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,8 +12,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
-import ru.practicum.android.diploma.BuildConfig
 import ru.practicum.android.diploma.core.util.debounce
 import ru.practicum.android.diploma.vacancysearch.domain.api.VacancySearchInteractor
 import ru.practicum.android.diploma.vacancysearch.ui.state.VacancySearchState
@@ -34,13 +31,12 @@ class VacancySearchViewModel(
 
     // Тут будут данные по фильтрам (SearchFilters)
 
-
     @OptIn(ExperimentalCoroutinesApi::class)
     val items = _searchQuery.flatMapLatest { query ->
         if (query.isBlank()) {
             flowOf(PagingData.empty())
         } else {
-            Pager(PagingConfig(pageSize = 20)) {
+            Pager(PagingConfig(pageSize = PAGE_SIZE)) {
                 VacancyPagingSource(vacancySearchInteractor, filters = mapOf(
                     "text" to query
                 ))
@@ -48,50 +44,20 @@ class VacancySearchViewModel(
         }
     }
 
-    private val onSearchDebounce = debounce<String>(
+    val onSearchDebounce = debounce<String>(
         waitMs = 2000L,
         scope = viewModelScope,
         destinationFunction = { query ->
             if(!query.isEmpty() && query != latestSearchQuery) {
-                searchVacancy(query) // При поиске всегда открывается 1 страница
+                _searchQuery.value = query
             }
 
             latestSearchQuery = query
         }
     )
 
-    fun onSearchQueryChanged(query: String) {
-        onSearchDebounce(query)
-    }
-
-    /** Тестовый метод для поиска вакансий */
-    fun searchVacancy(query: String) {
-        _searchQuery.value = query
-
-//        viewModelScope.launch {
-//
-//            Log.i("QUERY", query)
-////            pageLiveData.postValue(VacancySearchState.Loading)
-////
-////            vacancySearchInteractor.vacancySearch(
-////                token = "Bearer ${BuildConfig.API_ACCESS_TOKEN}",
-////                filters = mapOf(
-////                    "text" to query,
-////                    "page" to page.toString()
-////                ),
-////            ).collect { result ->
-////                result.onSuccess { info ->
-////                    if (info.items.isEmpty()) {
-////                        pageLiveData.postValue(VacancySearchState.Empty)
-////                    } else {
-////                        pageLiveData.postValue(VacancySearchState.Success(info.items))
-////                    }
-////                }
-////
-////                result.onFailure { exception ->
-////                    pageLiveData.postValue(VacancySearchState.Error(exception.message.toString()))
-////                }
-////            }
-//        }
+    /** Обновление данных для страницы */
+    fun updatePageLiveData(data: VacancySearchState) {
+        pageLiveData.postValue(data)
     }
 }

@@ -1,25 +1,63 @@
 package ru.practicum.android.diploma.vacancysearch.ui
 
-import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
-import ru.practicum.android.diploma.BuildConfig
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import ru.practicum.android.diploma.core.util.debounce
 import ru.practicum.android.diploma.vacancysearch.domain.api.VacancySearchInteractor
+import ru.practicum.android.diploma.vacancysearch.ui.state.VacancySearchState
 
 class VacancySearchViewModel(
     private val vacancySearchInteractor: VacancySearchInteractor
 ) : ViewModel() {
 
-    /** Тестовый метод для поиска вакансий */
-    fun searchVacancy() {
-        viewModelScope.launch {
-            vacancySearchInteractor.vacancySearch(
-                token = BuildConfig.API_ACCESS_TOKEN,
-                text = "android"
-            ).collect { result ->
-                Log.i("RESULT", result.toString())
-            }
+    companion object {
+        private const val PAGE_SIZE = 20 // Кол-во элементов на странице
+    }
+    private val pageLiveData = MutableLiveData<VacancySearchState>(VacancySearchState.Nothing)
+    fun observePage(): LiveData<VacancySearchState> = pageLiveData
+
+    private val _searchQuery = MutableStateFlow("") // Для динамического обновления списка
+    var latestSearchQuery: String = ""
+
+    // Тут будут данные по фильтрам (SearchFilters)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val items = _searchQuery.flatMapLatest { query ->
+        if (query.isBlank()) {
+            flowOf(PagingData.empty())
+        } else {
+            Pager(PagingConfig(pageSize = PAGE_SIZE)) {
+                VacancyPagingSource(vacancySearchInteractor, filters = mapOf(
+                    "text" to query
+                ))
+            }.flow.cachedIn(viewModelScope)
         }
+    }
+
+    val onSearchDebounce = debounce<String>(
+        waitMs = 2000L,
+        scope = viewModelScope,
+        destinationFunction = { query ->
+            if (!query.isEmpty() && query != latestSearchQuery) {
+                _searchQuery.value = query
+            }
+
+            latestSearchQuery = query
+        }
+    )
+
+    /** Обновление данных для страницы */
+    fun updatePageLiveData(data: VacancySearchState) {
+        pageLiveData.postValue(data)
     }
 }

@@ -23,7 +23,10 @@
     <dimen name="radius_xl">28dp</dimen>
 
     <dimen name="toolbar_height">64dp</dimen>
+    <dimen name="search_height">56dp</dimen>
     <dimen name="vacancy_item_size">48dp</dimen>
     <dimen name="placeholder_image_height">220dp</dimen>
+    <dimen name="progress_bar_size">36dp</dimen>
+    <dimen name="recycler_vacancy_footer_height">80dp</dimen>
 </resources>
 

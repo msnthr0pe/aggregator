@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.constraintlayout)
 
     implementation(libs.glide)
+    implementation(libs.androidx.paging.runtime.ktx)
     annotationProcessor(libs.compiler)
 
     implementation(libs.retrofit)
@@ -74,6 +75,8 @@ dependencies {
     implementation(libs.androidx.room.ktx)
 
     implementation(libs.androidx.activity)
+
+    implementation(libs.androidx.paging.common)
 
     testImplementation(libs.junit4)
     androidTestImplementation(libs.junit.ext)

@@ -5,6 +5,8 @@
     <string name="share">Поделиться</string>
     <string name="main">Главная</string>
     <string name="team">Команда</string>
+    <string name="vacancy_search">Поиск вакансий</string>
+    <string name="enter_your_query">Введите запрос</string>
     <string name="empty_list">Список Пуст</string>
     <string name="favorites_error_load">Не удалось получить\nсписок вакансий</string>
     <string name="vacancy_toolbar_title">Вакансия</string>
@@ -13,6 +15,9 @@
     <string name="required_experience_title">Требуемый опыт</string>
     <string name="vacancy_description_title">Описание вакансии</string>
     <string name="key_skills_title">Ключевые навыки</string>
+    <string name="no_internet">Нет интернета</string>
+    <string name="error">Произошла ошибка</string>
+    <string name="retry">Повторить</string>
     <string name="salary_not_specified">Зарплата не указана</string>
     <string name="salary_from">от</string>
     <string name="salary_to">до</string>

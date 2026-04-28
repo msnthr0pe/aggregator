@@ -2,14 +2,16 @@ package ru.practicum.android.diploma.core.data.favorites
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import ru.practicum.android.diploma.core.data.db.dao.FavoritesVacancyDao
+import ru.practicum.android.diploma.core.data.db.AppDatabase
 import ru.practicum.android.diploma.core.data.db.entity.VacancyEntity
 import ru.practicum.android.diploma.core.domain.favorites.repository.FavoritesRepository
 import ru.practicum.android.diploma.core.domain.models.VacancyDetails
 
 class FavoritesRepositoryImpl(
-    private val favoritesDao: FavoritesVacancyDao
+    private val appDatabase: AppDatabase
 ) : FavoritesRepository {
+
+    private val favoritesDao = appDatabase.favoritesDao()
 
     override fun getAllFavorites(): Flow<List<VacancyDetails>> {
         return favoritesDao.getAllFavorites().map { entities ->

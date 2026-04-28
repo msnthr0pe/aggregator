@@ -1,6 +1,7 @@
 package ru.practicum.android.diploma.core.util
 
 import android.content.Context
+import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
@@ -12,6 +13,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.BuildConfig
+import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.data.dto.area.AreaDto
 import ru.practicum.android.diploma.core.data.dto.industry.IndustryDto
 import ru.practicum.android.diploma.core.data.dto.vacancydetail.VacancyDetailDto
@@ -60,6 +62,20 @@ fun clickDebounce(
         }
     }
     return current.value
+}
+
+fun VacancyDetails.formatSalary(resources: Resources): String {
+    val salary = this.salary
+    return when {
+        salary == null -> resources.getString(R.string.salary_not_specified)
+        salary.from != null && salary.to != null ->
+            "${resources.getString(R.string.salary_from)} ${salary.from} ${resources.getString(R.string.salary_to)} ${salary.to} ${salary.currency ?: ""}"
+        salary.from != null ->
+            "${resources.getString(R.string.salary_from)} ${salary.from} ${salary.currency ?: ""}"
+        salary.to != null ->
+            "${resources.getString(R.string.salary_to)} ${salary.to} ${salary.currency ?: ""}"
+        else -> resources.getString(R.string.salary_not_specified)
+    }
 }
 
 fun loadPicInto(context: Context, url: String, image: ImageView) {

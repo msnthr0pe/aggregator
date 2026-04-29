@@ -41,9 +41,14 @@ class VacancySearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.recyclerList.adapter = vacancyAdapter.withLoadStateFooter(
-            footer = VacancyLoadStateAdapter { vacancyAdapter.retry() }
-        )
+        binding.recyclerList.apply {
+            adapter = vacancyAdapter.withLoadStateFooter(
+                footer = VacancyLoadStateAdapter { vacancyAdapter.retry() }
+            )
+            addItemDecoration(
+                FirstItemTopMarginDecoration(resources.getDimensionPixelSize(R.dimen.spacing_xxxl))
+            )
+        }
 
         viewModel.observePage().observe(viewLifecycleOwner) {
             renderActivity(it)

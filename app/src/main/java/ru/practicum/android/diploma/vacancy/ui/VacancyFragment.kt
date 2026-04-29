@@ -199,22 +199,20 @@ class VacancyFragment : Fragment() {
         binding.toolbar.menu.findItem(R.id.toolbar_share).isVisible = false
         binding.toolbar.menu.findItem(R.id.toolbar_like).isVisible = false
 
-        val message = when (serverCode) {
-            "-1" -> getString(R.string.no_internet)
-            "404" -> getString(R.string.vacancy_empty)
-            else -> getString(R.string.error)
+        when (serverCode) {
+            "-1" -> initPlaceholder(PlaceholderType.NOTHING, getString(R.string.no_internet))
+            "404" -> initPlaceholder(PlaceholderType.EMPTY, getString(R.string.no_vacancy_found_text))
+            else -> initPlaceholder(PlaceholderType.ERROR, getString(R.string.server_error))
         }
-
-        initPlaceholder(PlaceholderType.ERROR, message)
     }
 
     private fun initPlaceholder(type: PlaceholderType, message: String) {
         val imgElement = binding.placeholder.placeholderInfoImg
         val textElement = binding.placeholder.placeholderInfoText
         val imgUrl = when (type) {
-            PlaceholderType.NOTHING -> R.drawable.placeholder
-            PlaceholderType.ERROR -> R.drawable.server_error_on_vacancy
-            PlaceholderType.EMPTY -> R.drawable.vacancy_not_found
+            PlaceholderType.NOTHING -> R.drawable.no_internet
+            PlaceholderType.ERROR -> R.drawable.vacancy_not_found
+            PlaceholderType.EMPTY -> R.drawable.server_error_on_vacancy
         }
 
         Glide.with(this)

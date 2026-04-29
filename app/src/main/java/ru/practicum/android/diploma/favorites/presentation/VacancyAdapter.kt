@@ -40,7 +40,7 @@ class VacancyAdapter(
 
     class VacancyViewHolder(
         private val binding: VacancyItemBinding
-    ): RecyclerView.ViewHolder(binding.root) {
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(model: VacancyDetails) {
             binding.vacancyItemTitle.text = createTitleVacancy(model.name, model.address?.city)

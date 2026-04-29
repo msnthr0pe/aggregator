@@ -12,6 +12,7 @@
         android:layout_height="@dimen/toolbar_height"
         app:menu="@menu/toolbar_filter"
         app:title="@string/vacancy_search"
+        app:titleTextAppearance="@style/ToolbarTitleAppearance"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

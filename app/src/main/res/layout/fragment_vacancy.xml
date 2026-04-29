@@ -13,6 +13,7 @@
         android:layout_height="@dimen/toolbar_height"
         app:menu="@menu/toolbar_share_like"
         app:title="@string/vacancy_toolbar_title"
+        app:titleTextAppearance="@style/ToolbarTitleAppearance"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:navigationIcon="@drawable/arrow_left" />

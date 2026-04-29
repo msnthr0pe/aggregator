@@ -65,7 +65,7 @@ class VacancyFragment : Fragment() {
     private fun init() {
         binding.vacancyCardItem.vacancyItemSalary.isVisible = false
 
-        val vacancyId = requireArguments().getString("ID")
+        val vacancyId = requireArguments().getString(ARG_VACANCY_ID)
 
         vacancyId?.let {
             viewModel.init(it)
@@ -230,5 +230,9 @@ class VacancyFragment : Fragment() {
             is VacancyPageState.Error -> showError(state.serverCode)
             is VacancyPageState.Success -> showContent(state.vacancyState)
         }
+    }
+
+    companion object {
+        const val ARG_VACANCY_ID = "ID"
     }
 }

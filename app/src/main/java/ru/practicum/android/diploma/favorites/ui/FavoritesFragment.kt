@@ -10,10 +10,10 @@ import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.domain.models.VacancyDetails
-import ru.practicum.android.diploma.favorites.presentation.VacancyAdapter
 import ru.practicum.android.diploma.databinding.FragmentFavoritesBinding
 import ru.practicum.android.diploma.favorites.presentation.FavoritesState
 import ru.practicum.android.diploma.favorites.presentation.FavoritesViewModel
+import ru.practicum.android.diploma.favorites.presentation.VacancyAdapter
 
 class FavoritesFragment : Fragment() {
 

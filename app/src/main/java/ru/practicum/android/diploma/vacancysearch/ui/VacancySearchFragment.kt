@@ -15,8 +15,10 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.domain.models.VacancyCard
-import ru.practicum.android.diploma.databinding.FragmentVacancySearchBinding
+import ru.practicum.android.diploma.core.ui.root.RootActivity
 import ru.practicum.android.diploma.core.ui.state.PlaceholderType
+import ru.practicum.android.diploma.databinding.FragmentVacancySearchBinding
+import ru.practicum.android.diploma.vacancy.ui.VacancyFragment
 import ru.practicum.android.diploma.vacancysearch.ui.state.VacancySearchState
 
 class VacancySearchFragment : Fragment() {
@@ -25,6 +27,7 @@ class VacancySearchFragment : Fragment() {
     private var _binding: FragmentVacancySearchBinding? = null
     private val binding get() = _binding!!
     private var vacancyAdapter = VacancyAdapter { selectVacancyHandler(it) }
+    private val rootActivity by lazy { requireActivity() as RootActivity }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -102,7 +105,7 @@ class VacancySearchFragment : Fragment() {
                 } else if (isListEmpty) {
                     viewModel.updatePageLiveData(VacancySearchState.Empty)
                 } else {
-                    viewModel.updatePageLiveData(VacancySearchState.Success)
+                    viewModel.updatePageLiveData(VacancySearchState.Success())
                 }
             }
         }
@@ -112,7 +115,7 @@ class VacancySearchFragment : Fragment() {
     private fun selectVacancyHandler(vacancy: VacancyCard) {
         findNavController().navigate(
             R.id.action_vacancySearchFragment_to_vacancyFragment,
-            Bundle().apply { putString("ID", vacancy.id) }
+            Bundle().apply { putString(VacancyFragment.ARG_VACANCY_ID, vacancy.id) }
         )
     }
 
@@ -122,6 +125,7 @@ class VacancySearchFragment : Fragment() {
         _binding?.buttonCount?.visibility = View.GONE
         _binding?.progressBar?.visibility = View.GONE
         _binding?.placeholder?.placeholderInfo?.visibility = View.VISIBLE
+        _binding?.buttonCount?.visibility = View.GONE
 
         initPlaceholder(PlaceholderType.NOTHING, "")
     }
@@ -132,6 +136,7 @@ class VacancySearchFragment : Fragment() {
         _binding?.buttonCount?.visibility = View.GONE
         _binding?.progressBar?.visibility = View.GONE
         _binding?.placeholder?.placeholderInfo?.visibility = View.VISIBLE
+        _binding?.buttonCount?.visibility = View.GONE
 
         initPlaceholder(PlaceholderType.EMPTY, getString(R.string.favorites_error_load))
     }
@@ -142,6 +147,7 @@ class VacancySearchFragment : Fragment() {
         _binding?.buttonCount?.visibility = View.GONE
         _binding?.progressBar?.visibility = View.VISIBLE
         _binding?.placeholder?.placeholderInfo?.visibility = View.GONE
+        _binding?.buttonCount?.visibility = View.GONE
     }
 
     /** Отображение ошибки */
@@ -150,6 +156,7 @@ class VacancySearchFragment : Fragment() {
         _binding?.buttonCount?.visibility = View.GONE
         _binding?.progressBar?.visibility = View.GONE
         _binding?.placeholder?.placeholderInfo?.visibility = View.VISIBLE
+        _binding?.buttonCount?.visibility = View.GONE
 
         val message = when (serverCode) {
             "-1" -> getString(R.string.no_internet)
@@ -160,11 +167,17 @@ class VacancySearchFragment : Fragment() {
     }
 
     /** Отображение списка вакансий */
-    private fun showSuccess() {
+    private fun showSuccess(foundVacanciesAmount: Int) {
         _binding?.recyclerList?.visibility = View.VISIBLE
         _binding?.buttonCount?.visibility = View.GONE
         _binding?.progressBar?.visibility = View.GONE
         _binding?.placeholder?.placeholderInfo?.visibility = View.GONE
+        if (foundVacanciesAmount != -1) {
+            _binding?.buttonCount?.apply {
+                visibility = View.VISIBLE
+                text = rootActivity.getString(R.string.vacancies_found_count, foundVacanciesAmount)
+            }
+        }
     }
 
     /** Отрисовка placeholder */
@@ -191,7 +204,7 @@ class VacancySearchFragment : Fragment() {
             is VacancySearchState.Empty -> showEmpty()
             is VacancySearchState.Loading -> showLoading()
             is VacancySearchState.Error -> showError(state.serverCode)
-            is VacancySearchState.Success -> showSuccess()
+            is VacancySearchState.Success -> showSuccess(state.foundItems)
         }
     }
 }

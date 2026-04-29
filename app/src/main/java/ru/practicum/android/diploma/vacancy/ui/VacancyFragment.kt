@@ -1,23 +1,27 @@
 package ru.practicum.android.diploma.vacancy.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.domain.models.VacancyDetails
 import ru.practicum.android.diploma.core.ui.root.RootActivity
+import ru.practicum.android.diploma.core.ui.state.PlaceholderType
 import ru.practicum.android.diploma.core.util.formatSalary
-import ru.practicum.android.diploma.core.util.hasNetwork
 import ru.practicum.android.diploma.core.util.openDialer
 import ru.practicum.android.diploma.core.util.sendEmail
 import ru.practicum.android.diploma.core.util.shareVacancy
 import ru.practicum.android.diploma.core.util.tag
 import ru.practicum.android.diploma.databinding.FragmentVacancyBinding
+import ru.practicum.android.diploma.vacancy.model.VacancyPageState
+import ru.practicum.android.diploma.vacancy.model.VacancyState
 import ru.practicum.android.diploma.vacancy.presentation.VacancyViewModel
 import ru.practicum.android.diploma.vacancy.presentation.setContactsClickable
 import ru.practicum.android.diploma.vacancy.presentation.updateAreaName
@@ -25,7 +29,6 @@ import ru.practicum.android.diploma.vacancy.presentation.updateCompanyLogo
 import ru.practicum.android.diploma.vacancy.presentation.updateDescription
 import ru.practicum.android.diploma.vacancy.presentation.updateEmployer
 import ru.practicum.android.diploma.vacancy.presentation.updateSchedule
-import ru.practicum.android.diploma.vacancy.presentation.updateTitle
 
 class VacancyFragment : Fragment() {
 
@@ -46,49 +49,55 @@ class VacancyFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupUi()
-        setOnClickListeners()
-        setViewModelObserver()
-        requestVacancyDetails()
-    }
 
-    private fun setViewModelObserver() {
-        viewModel.observeVacancyDetails().observe(viewLifecycleOwner) { vacancyState ->
-            tag(vacancyState)
-            vacancyState.vacancyDetails?.let {
-                updateVacancyDetails(it)
-                binding.toolbar.firstToolbarAction.visibility = View.VISIBLE
-                binding.toolbar.secondToolbarAction.visibility = View.VISIBLE
-            } ?: updatePlaceholderState(isLoading = true, isServerError = vacancyState.isServerError)
+        viewModel.observeVacancyDetails().observe(viewLifecycleOwner) {
+            renderActivity(it)
         }
+
+        init()
+        initToolbar()
     }
 
-    private fun setupUi() {
-        with(binding) {
-            vacancyCardItem.vacancyItemSalary.isVisible = false
-            toolbar.title.text = rootActivity.getString(R.string.vacancy_toolbar_title)
-            toolbar.firstToolbarAction.apply {
-                visibility = View.GONE
-                setImageResource(R.drawable.share)
-            }
-            toolbar.secondToolbarAction.apply {
-                visibility = View.GONE
-                setImageResource(R.drawable.like)
-            }
-        }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
-    private fun requestVacancyDetails() {
+    private fun init() {
         val vacancyId = requireArguments().getString("ID")
+
         vacancyId?.let {
-            viewModel.requestVacancyDetails(it)
+            viewModel.init(it)
+        }
+    }
+
+    private fun initToolbar() {
+        val menuShare = binding.toolbar.menu.findItem(R.id.toolbar_share)
+        val menuLike = binding.toolbar.menu.findItem(R.id.toolbar_like)
+
+        binding.toolbar.setNavigationOnClickListener {
+            findNavController().popBackStack()
+        }
+
+        menuShare.setOnMenuItemClickListener {
+            val vacancyDetails = viewModel.getVacancyDetails()
+
+            if (vacancyDetails != null) {
+                rootActivity.shareVacancy(vacancyDetails.url)
+            }
+
+            true
+        }
+
+        menuLike.setOnMenuItemClickListener {
+            viewModel.toggleRequestFavorite()
+            true
         }
     }
 
     private fun updateVacancyDetails(vacancyDetails: VacancyDetails) {
-        updatePlaceholderState(isLoading = false)
         with(binding) {
-            vacancyTitle.updateTitle(vacancyDetails.name)
+            vacancyTitle.text = vacancyDetails.name
             vacancySubtitle.text = formatSalary(vacancyDetails.salary, binding.root.resources)
             vacancyCardItem.vacancyItemTitle.updateEmployer(vacancyDetails.employer.name)
             vacancyCardItem.vacancyItemCompany.updateAreaName(vacancyDetails)
@@ -98,7 +107,6 @@ class VacancyFragment : Fragment() {
             updateRequiredExperience(vacancyDetails.experience)
             updateRequiredSkills(vacancyDetails.skills)
             updateContacts(vacancyDetails.contacts)
-            updateToolbarActions(vacancyDetails)
         }
     }
 
@@ -151,50 +159,75 @@ class VacancyFragment : Fragment() {
         }
     }
 
-    private fun updateToolbarActions(vacancyDetails: VacancyDetails) {
-        binding.toolbar.firstToolbarAction.setOnClickListener {
-            rootActivity.shareVacancy(vacancyDetails.url)
+    private fun changeFavoriteIcon(isFavorite: Boolean) {
+        val menuLike = binding.toolbar.menu.findItem(R.id.toolbar_like)
+
+        if (isFavorite) {
+            menuLike.setIcon(R.drawable.favorites_ic)
+        } else {
+            menuLike.setIcon(R.drawable.like)
         }
     }
 
-    private fun updatePlaceholderState(isLoading: Boolean, isServerError: Boolean = false) {
-        with(binding) {
-            val hasNetwork = rootActivity.hasNetwork()
-            progressBar.isVisible = isLoading && hasNetwork
+    private fun showContent(vacancyState: VacancyState) {
+        binding.progressBar.isVisible = false
+        binding.vacancyContents.isVisible = true
+        binding.placeholder.placeholderInfo.isVisible = false
+        binding.toolbar.menu.findItem(R.id.toolbar_share).isVisible = true
+        binding.toolbar.menu.findItem(R.id.toolbar_like).isVisible = true
 
-            if (!hasNetwork) {
-                showNoInternetPlaceholder()
-            } else if (isServerError) {
-                showServerErrorPlaceholder()
-            }
+        changeFavoriteIcon(vacancyState.isFavorite)
+
+        if (vacancyState.vacancyDetails != null) {
+            updateVacancyDetails(vacancyState.vacancyDetails)
         }
     }
 
-    private fun showNoInternetPlaceholder() {
-        with(binding) {
-            errorPlaceholderLayout.isVisible = true
-            errorVacancyPlaceholder.setImageResource(R.drawable.no_internet)
-            errorVacancyPlaceholderText.setText(R.string.no_internet)
+    private fun showLoading() {
+        binding.progressBar.isVisible = true
+        binding.vacancyContents.isVisible = false
+        binding.placeholder.placeholderInfo.isVisible = false
+        binding.toolbar.menu.findItem(R.id.toolbar_share).isVisible = false
+        binding.toolbar.menu.findItem(R.id.toolbar_like).isVisible = false
+    }
+
+    private fun showError(serverCode: String) {
+        binding.progressBar.isVisible = false
+        binding.vacancyContents.isVisible = false
+        binding.placeholder.placeholderInfo.isVisible = true
+        binding.toolbar.menu.findItem(R.id.toolbar_share).isVisible = false
+        binding.toolbar.menu.findItem(R.id.toolbar_like).isVisible = false
+
+        val message = when (serverCode) {
+            "-1" -> getString(R.string.no_internet)
+            "404" -> getString(R.string.vacancy_empty)
+            else -> getString(R.string.error)
+        }
+
+        initPlaceholder(PlaceholderType.ERROR, message)
+    }
+
+    private fun initPlaceholder(type: PlaceholderType, message: String) {
+        val imgElement = binding.placeholder.placeholderInfoImg
+        val textElement = binding.placeholder.placeholderInfoText
+        val imgUrl = when (type) {
+            PlaceholderType.NOTHING -> R.drawable.placeholder
+            PlaceholderType.ERROR -> R.drawable.server_error_on_vacancy
+            PlaceholderType.EMPTY -> R.drawable.vacancy_not_found
+        }
+
+        Glide.with(this)
+            .load(imgUrl)
+            .into(imgElement)
+
+        textElement.text = message
+    }
+
+    private fun renderActivity(state: VacancyPageState) {
+        when (state) {
+            is VacancyPageState.Loading -> showLoading()
+            is VacancyPageState.Error -> showError(state.serverCode)
+            is VacancyPageState.Success -> showContent(state.vacancyState)
         }
     }
-
-    private fun showServerErrorPlaceholder() {
-        with(binding) {
-            errorPlaceholderLayout.isVisible = true
-            errorVacancyPlaceholder.setImageResource(R.drawable.server_error_on_vacancy)
-            errorVacancyPlaceholderText.setText(R.string.server_error)
-        }
-    }
-
-    private fun setOnClickListeners() {
-        binding.toolbar.arrowBack.setOnClickListener {
-            findNavController().popBackStack()
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
 }

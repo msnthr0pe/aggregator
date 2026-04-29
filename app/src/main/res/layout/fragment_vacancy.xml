@@ -7,10 +7,21 @@
     android:layout_height="match_parent"
     tools:context=".vacancy.ui.VacancyFragment">
 
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        app:menu="@menu/toolbar_share_like"
+        app:title="@string/vacancy_toolbar_title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:navigationIcon="@drawable/arrow_left" />
+
     <androidx.core.widget.NestedScrollView
         android:id="@+id/vacancy_contents"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/toolbar_height">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -23,8 +34,8 @@
                 style="@style/TitleText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="80dp"
-                android:text="Android-разработчик"
+                android:layout_marginTop="@dimen/spacing_md"
+                tools:text="Android-разработчик"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -33,7 +44,7 @@
                 style="@style/SubtitleText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="от 100000"
+                tools:text="от 100000"
                 app:layout_constraintStart_toStartOf="@+id/vacancy_title"
                 app:layout_constraintTop_toBottomOf="@+id/vacancy_title" />
 
@@ -69,7 +80,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_xs"
                 style="@style/SmallText"
-                android:text="От 1 года до 4 лет"
+                tools:text="От 1 года до 4 лет"
                 app:layout_constraintStart_toStartOf="@+id/required_experience_title"
                 app:layout_constraintTop_toBottomOf="@+id/required_experience_title" />
 
@@ -79,7 +90,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_sm"
                 style="@style/SmallText"
-                android:text="Полная занятость, Удаленная работа"
+                tools:text="Полная занятость, Удаленная работа"
                 app:layout_constraintStart_toStartOf="@+id/required_experience"
                 app:layout_constraintTop_toBottomOf="@+id/required_experience" />
 
@@ -89,7 +100,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_xxl"
-                android:text="Длинное описание, которое надо парсить"
+                tools:text="Длинное описание, которое надо парсить"
                 app:layout_constraintStart_toStartOf="@+id/schedule"
                 app:layout_constraintTop_toBottomOf="@+id/schedule" />
 
@@ -108,7 +119,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_md"
-                android:text="Несколько навыков"
+                tools:text="Несколько навыков"
                 app:layout_constraintStart_toStartOf="@+id/skills_title"
                 app:layout_constraintTop_toBottomOf="@+id/skills_title" />
 
@@ -128,7 +139,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_md"
-                android:text="Имя контакта"
+                tools:text="Имя контакта"
                 app:layout_constraintStart_toStartOf="@+id/contacts_title"
                 app:layout_constraintTop_toBottomOf="@+id/contacts_title" />
 
@@ -138,7 +149,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_md"
-                android:text="Несколько контактов"
+                tools:text="Несколько контактов"
                 app:layout_constraintStart_toStartOf="@+id/contact_name"
                 app:layout_constraintTop_toBottomOf="@+id/contact_name" />
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -146,54 +157,27 @@
     </androidx.core.widget.NestedScrollView>
 
     <include
-        android:id="@+id/toolbar"
-        layout="@layout/aggregator_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <LinearLayout
-        android:id="@+id/error_placeholder_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="64dp"
-        android:background="@color/white"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <ImageView
-            android:id="@+id/error_vacancy_placeholder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/vacancy_not_found" />
-
-        <TextView
-            android:id="@+id/error_vacancy_placeholder_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/SubtitleText"
-            android:layout_marginTop="@dimen/spacing_md"
-            android:gravity="center"
-            android:text="@string/no_vacancy_found_text" />
-
-    </LinearLayout>
+        android:id="@+id/placeholder"
+        app:layout_constraintStart_toStartOf="@id/leftBorder"
+        app:layout_constraintEnd_toEndOf="@id/rightBorder"
+        app:layout_constraintTop_toBottomOf="@id/searchWrapper"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"
+        layout="@layout/placeholder_info" />
 
     <FrameLayout
-        android:id="@+id/progress_bar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="64dp"
-        android:background="@color/white"
-        android:clickable="true"
-        android:focusable="true"
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:visibility="gone">
 
         <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminateTint="@color/blue"
-            android:indeterminateTintMode="src_in"/>
+            android:layout_width="@dimen/progress_bar_size"
+            android:layout_height="@dimen/progress_bar_size"
+            style="@style/SearchProgressBar" />
     </FrameLayout>
 
 </FrameLayout>

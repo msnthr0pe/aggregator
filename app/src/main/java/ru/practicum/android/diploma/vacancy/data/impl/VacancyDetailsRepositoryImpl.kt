@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.vacancy.data.impl
 
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import ru.practicum.android.diploma.core.data.dto.vacancydetail.VacancyDetailDto
@@ -14,15 +15,11 @@ import ru.practicum.android.diploma.vacancy.domain.api.VacancyDetailsRepository
 class VacancyDetailsRepositoryImpl(
     private val networkClient: NetworkClient,
 ) : VacancyDetailsRepository {
-    override fun getVacancyInfo(
-        vacancyId: String,
-    ): Flow<VacancyDetails?> = flow {
+    override fun getVacancyInfo(vacancyId: String): Flow<Result<VacancyDetails>> = flow {
         val response = networkClient.doRequest<VacancyDetailDto>(
-            VacancyDetailRequest(
-                token = getToken(),
-                id = vacancyId,
-            )
+            VacancyDetailRequest(token = getToken(), id = vacancyId)
         )
+
         val result = response.result
         if (response.resultCode == RetrofitNetworkClient.CODE_200 && result != null) {
             val info = with(result) {
@@ -43,9 +40,9 @@ class VacancyDetailsRepositoryImpl(
                     industry = industry.toDomain(),
                 )
             }
-            emit(info)
+            emit(Result.success(info))
         } else {
-            emit(null)
+            emit(Result.failure(Exception(response.resultCode.toString())))
         }
     }
 }

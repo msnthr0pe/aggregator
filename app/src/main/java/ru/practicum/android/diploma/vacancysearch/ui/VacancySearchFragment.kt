@@ -16,7 +16,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.domain.models.VacancyCard
 import ru.practicum.android.diploma.databinding.FragmentVacancySearchBinding
-import ru.practicum.android.diploma.vacancysearch.ui.state.PlaceholderType
+import ru.practicum.android.diploma.core.ui.state.PlaceholderType
 import ru.practicum.android.diploma.vacancysearch.ui.state.VacancySearchState
 
 class VacancySearchFragment : Fragment() {
@@ -169,23 +169,19 @@ class VacancySearchFragment : Fragment() {
 
     /** Отрисовка placeholder */
     private fun initPlaceholder(type: PlaceholderType, message: String) {
-        val imgElement = _binding?.placeholder?.placeholderInfoImg
-        val textElement = _binding?.placeholder?.placeholderInfoText
+        val imgElement = binding.placeholder.placeholderInfoImg
+        val textElement = binding.placeholder.placeholderInfoText
         val imgUrl = when (type) {
             PlaceholderType.NOTHING -> R.drawable.placeholder
             PlaceholderType.ERROR -> R.drawable.placeholder_2
             PlaceholderType.EMPTY -> R.drawable.favorites_error_load
         }
 
-        if (imgElement != null) {
-            Glide.with(this)
-                .load(imgUrl)
-                .into(imgElement)
-        }
+        Glide.with(this)
+            .load(imgUrl)
+            .into(imgElement)
 
-        if (textElement != null) {
-            textElement.text = message
-        }
+        textElement.text = message
     }
 
     /** Рендер состояния страницы */

@@ -15,10 +15,6 @@ import ru.practicum.android.diploma.core.domain.models.VacancyDetails
 import ru.practicum.android.diploma.core.util.loadSvgInto
 import ru.practicum.android.diploma.core.util.setPrettyHtmlByTags
 
-fun TextView.updateTitle(title: String) {
-    text = title
-}
-
 fun TextView.updateEmployer(employerName: String) {
     // Карточка используется в разных экранах
     // и в разных экранах одно поле может отображать разные данные

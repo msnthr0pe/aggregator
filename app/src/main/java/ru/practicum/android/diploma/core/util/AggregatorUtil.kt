@@ -5,8 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Typeface
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.net.Uri
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -182,18 +180,6 @@ fun Context.shareVacancy(url: String) {
     intent.putExtra(Intent.EXTRA_TEXT, url)
     intent.type = "text/plain"
     startActivity(Intent.createChooser(intent, null))
-}
-
-fun Context.hasNetwork(): Boolean {
-    val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    val network = connectivityManager.activeNetwork
-    val capabilities = connectivityManager.getNetworkCapabilities(network)
-    if (network == null || capabilities == null) {
-        return false
-    }
-    return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
-        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-        capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
 }
 
 fun <T> debounce(

@@ -63,6 +63,8 @@ class VacancyFragment : Fragment() {
     }
 
     private fun init() {
+        binding.vacancyCardItem.vacancyItemSalary.isVisible = false
+
         val vacancyId = requireArguments().getString("ID")
 
         vacancyId?.let {

@@ -216,7 +216,13 @@ fun clickDebounce(
 fun formatSalary(salary: VacancyCardSalary?, resources: Resources): String {
     val fromText = resources.getString(R.string.salary_from)
     val toText = resources.getString(R.string.salary_to)
-    val currency = salary?.currency.orEmpty()
+    val currencyFormat = when (val currency = salary?.currency.orEmpty()) {
+        "RUR" -> "₽"
+        "USD" -> "$"
+        "EUR" -> "€"
+        "KZT" -> "₸"
+        else -> currency
+    }
 
     fun Int.formatWithSpaces(): String {
         return this.toString()
@@ -230,15 +236,15 @@ fun formatSalary(salary: VacancyCardSalary?, resources: Resources): String {
         salary == null -> resources.getString(R.string.salary_not_specified)
 
         salary.from != null && salary.to != null -> {
-            "$fromText ${salary.from.formatWithSpaces()} $toText ${salary.to.formatWithSpaces()} $currency"
+            "$fromText ${salary.from.formatWithSpaces()} $toText ${salary.to.formatWithSpaces()} $currencyFormat"
         }
 
         salary.from != null -> {
-            "$fromText ${salary.from.formatWithSpaces()} $currency"
+            "$fromText ${salary.from.formatWithSpaces()} $currencyFormat"
         }
 
         salary.to != null -> {
-            "$toText ${salary.to.formatWithSpaces()} $currency"
+            "$toText ${salary.to.formatWithSpaces()} $currencyFormat"
         }
 
         else -> resources.getString(R.string.salary_not_specified)

@@ -12,6 +12,7 @@
         android:layout_height="@dimen/toolbar_height"
         app:menu="@menu/toolbar_filter"
         app:title="@string/vacancy_search"
+        app:titleTextAppearance="@style/ToolbarTitleAppearance"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -79,11 +80,12 @@
         android:id="@+id/buttonCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintTop_toBottomOf="@id/searchWrapper"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="Какое-то название"
+        app:cornerRadius="16dp"
         style="@style/ButtonFind" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -94,7 +96,7 @@
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/buttonCount"
+        app:layout_constraintTop_toBottomOf="@id/searchWrapper"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 </androidx.constraintlayout.widget.ConstraintLayout>

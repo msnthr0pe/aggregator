@@ -3,8 +3,8 @@ package ru.practicum.android.diploma.vacancysearch.ui
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import kotlinx.coroutines.flow.first
-import ru.practicum.android.diploma.BuildConfig
 import ru.practicum.android.diploma.core.domain.models.VacancyCard
+import ru.practicum.android.diploma.core.util.getToken
 import ru.practicum.android.diploma.vacancysearch.domain.api.VacancySearchInteractor
 import java.io.IOException
 
@@ -21,7 +21,7 @@ class VacancyPagingSource(
             val page = params.key ?: 1 // API страницы начинается с 1
 
             val result = vacancySearchInteractor.vacancySearch(
-                token = "Bearer ${BuildConfig.API_ACCESS_TOKEN}",
+                token = getToken(),
                 filters = filters + ("page" to page.toString())
             ).first()
 
@@ -40,6 +40,18 @@ class VacancyPagingSource(
             }
         } catch (e: IOException) {
             LoadResult.Error(e)
+        }
+    }
+
+    suspend fun getFoundVacanciesAmount(): Int {
+        val result = vacancySearchInteractor.vacancySearch(
+            token = getToken(),
+            filters = filters
+        ).first()
+        return if (result.isSuccess) {
+            result.getOrNull()?.found ?: -1
+        } else {
+            -1
         }
     }
 

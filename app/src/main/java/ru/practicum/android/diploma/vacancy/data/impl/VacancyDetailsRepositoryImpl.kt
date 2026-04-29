@@ -14,23 +14,19 @@ import ru.practicum.android.diploma.vacancy.domain.api.VacancyDetailsRepository
 class VacancyDetailsRepositoryImpl(
     private val networkClient: NetworkClient,
 ) : VacancyDetailsRepository {
-    override fun getVacancyInfo(
-        vacancyId: String,
-    ): Flow<VacancyDetails?> = flow {
+    override fun getVacancyInfo(vacancyId: String): Flow<Result<VacancyDetails>> = flow {
         val response = networkClient.doRequest<VacancyDetailDto>(
-            VacancyDetailRequest(
-                token = getToken(),
-                id = vacancyId,
-            )
+            VacancyDetailRequest(token = getToken(), id = vacancyId)
         )
+
         val result = response.result
-        if (response.resultCode == RetrofitNetworkClient.Companion.CODE_200 && result != null) {
+        if (response.resultCode == RetrofitNetworkClient.CODE_200 && result != null) {
             val info = with(result) {
                 VacancyDetails(
                     id = id,
                     name = name,
                     description = description,
-                    salary = salary?.toDomain(),
+                    salary = salary,
                     address = address?.toDomain(),
                     experience = experience?.toDomain(),
                     schedule = schedule?.toDomain(),
@@ -43,9 +39,9 @@ class VacancyDetailsRepositoryImpl(
                     industry = industry.toDomain(),
                 )
             }
-            emit(info)
+            emit(Result.success(info))
         } else {
-            emit(null)
+            emit(Result.failure(Exception(response.resultCode.toString())))
         }
     }
 }

@@ -27,4 +27,6 @@
     <string name="salary_to">до</string>
     <string name="contacts">Контакты</string>
     <string name="call_via">Позвонить через</string>
+    <string name="vacancy_empty">Вакансия не найдена или удалена</string>
+    <string name="vacancies_found_count">Найдено %d вакансий</string>
 </resources>

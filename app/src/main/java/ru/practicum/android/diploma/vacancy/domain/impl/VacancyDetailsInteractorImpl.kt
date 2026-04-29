@@ -8,6 +8,6 @@ import ru.practicum.android.diploma.vacancy.domain.api.VacancyDetailsRepository
 class VacancyDetailsInteractorImpl(
     private val repository: VacancyDetailsRepository
 ) : VacancyDetailsInteractor {
-    override fun getVacancyInfo(vacancyId: String): Flow<VacancyDetails?> =
+    override fun getVacancyInfo(vacancyId: String): Flow<Result<VacancyDetails>> =
         repository.getVacancyInfo(vacancyId)
 }

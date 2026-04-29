@@ -28,6 +28,7 @@ class VacancySearchViewModel(
 
     private val _searchQuery = MutableStateFlow("") // Для динамического обновления списка
     var latestSearchQuery: String = ""
+    private var foundVacanciesAmount = -1
 
     // Тут будут данные по фильтрам (SearchFilters)
 
@@ -36,10 +37,14 @@ class VacancySearchViewModel(
         if (query.isBlank()) {
             flowOf(PagingData.empty())
         } else {
+            val pagingSourceFactory =
+                VacancyPagingSource(
+                    vacancySearchInteractor,
+                    filters = mapOf("text" to query)
+                )
+            foundVacanciesAmount = pagingSourceFactory.getFoundVacanciesAmount()
             Pager(PagingConfig(pageSize = PAGE_SIZE)) {
-                VacancyPagingSource(vacancySearchInteractor, filters = mapOf(
-                    "text" to query
-                ))
+                pagingSourceFactory
             }.flow.cachedIn(viewModelScope)
         }
     }
@@ -58,6 +63,11 @@ class VacancySearchViewModel(
 
     /** Обновление данных для страницы */
     fun updatePageLiveData(data: VacancySearchState) {
-        pageLiveData.postValue(data)
+        val state = if (data is VacancySearchState.Success) {
+            data.copy(foundItems = foundVacanciesAmount)
+        } else {
+            data
+        }
+        pageLiveData.postValue(state)
     }
 }

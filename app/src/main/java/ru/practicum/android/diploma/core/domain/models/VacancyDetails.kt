@@ -4,7 +4,7 @@ data class VacancyDetails(
     val id: String,
     val name: String,
     val description: String,
-    val salary: Salary?,
+    val salary: VacancyCardSalary?,
     val address: Address?,
     val experience: Experience?,
     val schedule: Schedule?,
@@ -16,12 +16,6 @@ data class VacancyDetails(
     val url: String,
     val industry: Industry,
 ) {
-    data class Salary(
-        val from: Int?,
-        val to: Int?,
-        val currency: String?
-    )
-
     data class Address(
         val id: String,
         val city: String,

@@ -7,6 +7,7 @@
     <string name="team">Команда</string>
     <string name="vacancy_search">Поиск вакансий</string>
     <string name="enter_your_query">Введите запрос</string>
+    <string name="enter_sum">Введите сумму</string>
     <string name="empty_list">Список Пуст</string>
     <string name="favorites_error_load">Не удалось получить\nсписок вакансий</string>
     <string name="vacancy_toolbar_title">Вакансия</string>
@@ -29,4 +30,9 @@
     <string name="call_via">Позвонить через</string>
     <string name="vacancy_empty">Вакансия не найдена или удалена</string>
     <string name="vacancies_found_count">Найдено %d вакансий</string>
+    <string name="industry">Отрасль</string>
+    <string name="expected_salary">Ожидаемая зарплата</string>
+    <string name="do_not_show_without_salary">Не показывать без зарплаты</string>
+    <string name="apply">Применить</string>
+    <string name="discard">Сбросить</string>
 </resources>

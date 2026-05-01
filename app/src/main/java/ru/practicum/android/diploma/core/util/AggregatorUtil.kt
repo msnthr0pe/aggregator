@@ -257,6 +257,7 @@ fun loadSvgInto(url: String, image: ImageView) {
         placeholder(R.drawable.vacancy_placeholder)
         error(R.drawable.vacancy_placeholder)
         fallback(R.drawable.vacancy_placeholder) // Для пустой строки
+        addHeader("User-Agent", "Mozilla/5.0 (Android)")
         addHeader("Accept", "image/svg+xml")
         decoderFactory(SvgDecoder.Factory())
     }

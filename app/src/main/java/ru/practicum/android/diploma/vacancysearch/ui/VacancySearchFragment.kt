@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.core.domain.models.SearchFilters
 import ru.practicum.android.diploma.core.domain.models.VacancyCard
 import ru.practicum.android.diploma.core.ui.root.RootActivity
 import ru.practicum.android.diploma.core.ui.state.PlaceholderType
@@ -52,14 +53,25 @@ class VacancySearchFragment : Fragment() {
 
         viewModel.observePage().observe(viewLifecycleOwner) {
             renderActivity(it)
+            updateFilterIcon()
         }
 
         val toolbar = binding.btnBack.menu.findItem(R.id.toolbar_filter)
         toolbar.setOnMenuItemClickListener {
-            findNavController().navigate(R.id.action_vacancySearchFragment_to_filtersFragment)
+            findNavController().navigate(R.id.action_vacancySearchFragment_to_filtersFragment,
+                Bundle().apply {
+                    viewModel.getCurrentFilters()?.let { filters ->
+                        filters.areaCountry?.id?.let { putInt("area", it) }
+                        filters.industry?.id?.let { putInt("industry", it) }
+                        filters.salary?.let { putInt("salary", it) }
+                        filters.showSalary?.let { putBoolean("only_with_salary", it) }
+                    }
+                }
+            )
             true
         }
 
+        initFilters()
         initSearch()
         initVacancyList()
     }
@@ -114,6 +126,28 @@ class VacancySearchFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun initFilters() {
+        val args = arguments ?: return
+
+        if (args.containsKey("area") ||
+            args.containsKey("industry") ||
+            args.containsKey("salary")) {
+
+            viewModel.applyFilters(
+                SearchFilters(
+                    areaCountry = args.getInt("area")
+                        .takeIf { it != 0 }
+                        ?.let { SearchFilters.AreaCountry(it, "") },
+                    industry = args.getInt("industry")
+                        .takeIf { it != 0 }
+                        ?.let { SearchFilters.Industry(it, "") },
+                    salary = args.getInt("salary").takeIf { it != 0 },
+                    showSalary = args.getBoolean("only_with_salary", false)
+                )
+            )
+        } else return
     }
 
     /** Обработчик клика при выборе трека */
@@ -183,6 +217,14 @@ class VacancySearchFragment : Fragment() {
                 text = rootActivity.getString(R.string.vacancies_found_count, foundVacanciesAmount)
             }
         }
+    }
+
+    private fun updateFilterIcon() {
+        val toolbar = binding.btnBack.menu.findItem(R.id.toolbar_filter)
+        toolbar.setIcon(
+            if (viewModel.getCurrentFilters() != null) R.drawable.filter_on
+            else R.drawable.filter
+        )
     }
 
     /** Отрисовка placeholder */

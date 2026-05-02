@@ -167,7 +167,7 @@ class VacancySearchFragment : Fragment() {
         }
     }
     
-        private fun showPagingError(loadStates: CombinedLoadStates) {
+    private fun showPagingError(loadStates: CombinedLoadStates) {
         if (loadStates.append is LoadState.Error) {
             val error = (loadStates.append as LoadState.Error)
             val message = when (error.error.message) {
@@ -176,6 +176,7 @@ class VacancySearchFragment : Fragment() {
             }
             Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
         }
+    }
 
     /** Обработчик клика при выборе трека */
     private fun selectVacancyHandler(vacancy: VacancyCard) {

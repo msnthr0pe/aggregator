@@ -114,6 +114,15 @@
     <style name="SearchProgressBar">
         <item name="android:indeterminateTint">@color/blue</item>
     </style>
+
+    <style name="IndustryItemText">
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">@dimen/text_size_md</item>
+    </style>
+
+    <style name="IndustryItemRadio">
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">@dimen/text_size_md</item>
+        <item name="android:buttonTint">@color/blue</item>
+    </style>
 </resources>
-
-

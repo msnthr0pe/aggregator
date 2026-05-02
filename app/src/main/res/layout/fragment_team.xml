@@ -6,8 +6,11 @@
     tools:context=".team.ui.TeamFragment">
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="TeamFragment" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="20dp"
+        style="@style/VacancyItemTitle"
+        android:text="Илья Павловский\n\nАртем Сахофин\n\nМаксим Петров" />
 
 </FrameLayout>

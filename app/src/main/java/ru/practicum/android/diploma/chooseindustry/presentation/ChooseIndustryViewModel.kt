@@ -12,7 +12,7 @@ import ru.practicum.android.diploma.core.domain.models.VacancyDetails
 
 class ChooseIndustryViewModel(
     private val interactor: ChooseIndustryInteractor,
-): ViewModel() {
+) : ViewModel() {
 
     private var recyclerState = RecyclerState(list = listOf(), filter = "", selectItem = null)
     private val pageLiveData = MutableLiveData<ChooseIndustryState>(ChooseIndustryState.Loading)

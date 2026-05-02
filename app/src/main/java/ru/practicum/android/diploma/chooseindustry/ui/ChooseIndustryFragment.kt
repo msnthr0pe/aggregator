@@ -41,11 +41,9 @@ class ChooseIndustryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.recyclerList.adapter = adapter
-
         viewModel.observePage().observe(viewLifecycleOwner) {
             renderActivity(it)
         }
-        
         init()
         initToolbar()
         initSearch()

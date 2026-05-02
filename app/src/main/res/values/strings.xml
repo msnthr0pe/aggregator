@@ -7,6 +7,7 @@
     <string name="team">Команда</string>
     <string name="vacancy_search">Поиск вакансий</string>
     <string name="enter_your_query">Введите запрос</string>
+    <string name="enter_sum">Введите сумму</string>
     <string name="enter_your_industry">Введите отрасль</string>
     <string name="empty_list">Список Пуст</string>
     <string name="favorites_error_load">Не удалось получить\nсписок вакансий</string>
@@ -36,4 +37,9 @@
     <string name="select">Выбрать</string>
     <string name="check_internet">Проверьте подключение к интернету</string>
     <string name="error_happen">Произошла ошибка</string>
+    <string name="industry">Отрасль</string>
+    <string name="expected_salary">Ожидаемая зарплата</string>
+    <string name="do_not_show_without_salary">Не показывать без зарплаты</string>
+    <string name="apply">Применить</string>
+    <string name="discard">Сбросить</string>
 </resources>

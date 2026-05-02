@@ -12,6 +12,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import ru.practicum.android.diploma.core.domain.models.SearchFilters
 import ru.practicum.android.diploma.core.util.debounce
 import ru.practicum.android.diploma.vacancysearch.domain.api.VacancySearchInteractor
 import ru.practicum.android.diploma.vacancysearch.ui.state.VacancySearchState
@@ -30,6 +31,8 @@ class VacancySearchViewModel(
     var latestSearchQuery: String = ""
     private var foundVacanciesAmount = -1
 
+    private var currentFilters: SearchFilters? = null
+
     // Тут будут данные по фильтрам (SearchFilters)
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -37,10 +40,19 @@ class VacancySearchViewModel(
         if (query.isBlank()) {
             flowOf(PagingData.empty())
         } else {
+            val filtersMap = mutableMapOf("text" to query)
+            currentFilters?.let { filters ->
+                filters.areaCountry?.id?.let { filtersMap["area"] = it.toString() }
+                filters.areaRegion?.id?.let { filtersMap["area"] = it.toString() }
+                filters.industry?.id?.let { filtersMap["industry"] = it.toString() }
+                filters.salary?.let { filtersMap["salary"] = it.toString() }
+                if (filters.showSalary == true) filtersMap["only_with_salary"] = "true"
+            }
+
             val pagingSourceFactory =
                 VacancyPagingSource(
                     vacancySearchInteractor,
-                    filters = mapOf("text" to query)
+                    filters = filtersMap
                 )
             foundVacanciesAmount = pagingSourceFactory.getFoundVacanciesAmount()
             Pager(PagingConfig(pageSize = PAGE_SIZE)) {
@@ -60,6 +72,15 @@ class VacancySearchViewModel(
             latestSearchQuery = query
         }
     )
+
+    fun applyFilters(filters: SearchFilters?) {
+        currentFilters = filters
+        if (latestSearchQuery.isNotBlank()) {
+            _searchQuery.value = latestSearchQuery
+        }
+    }
+
+    fun getCurrentFilters(): SearchFilters? = currentFilters
 
     /** Обновление данных для страницы */
     fun updatePageLiveData(data: VacancySearchState) {

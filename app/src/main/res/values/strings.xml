@@ -34,4 +34,6 @@
     <string name="vacancies_found_count">Найдено %d вакансий</string>
     <string name="choose_industry">Выбор отрасли</string>
     <string name="select">Выбрать</string>
+    <string name="check_internet">Проверьте подключение к интернету</string>
+    <string name="error_happen">Произошла ошибка</string>
 </resources>

@@ -26,6 +26,16 @@ class FiltersFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Тестовый пример. Можно не передавать Bundle
+//        binding.button.setOnClickListener {
+//            findNavController().navigate(
+//                R.id.action_filtersFragment_to_chooseIndustryFragment
+//                Bundle().apply {
+//                    putInt("id", 15)
+//                    putString("name", "Автомобильный бизнес")
+//                }
+//            )
+//        }
 
         setupListeners()
     }

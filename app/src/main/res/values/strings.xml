@@ -8,8 +8,11 @@
     <string name="vacancy_search">Поиск вакансий</string>
     <string name="enter_your_query">Введите запрос</string>
     <string name="enter_sum">Введите сумму</string>
+    <string name="enter_your_industry">Введите отрасль</string>
     <string name="empty_list">Список Пуст</string>
     <string name="favorites_error_load">Не удалось получить\nсписок вакансий</string>
+    <string name="search_industry_empty_list">Такой отрасли нет</string>
+    <string name="search_industry_error_list">Не удалось получить список</string>
     <string name="vacancy_toolbar_title">Вакансия</string>
     <string name="no_vacancy_found_text">Вакансия не найдена или\nудалена</string>
     <string name="vacancy_no_salary_bounds">Зарплата не указана</string>
@@ -30,6 +33,8 @@
     <string name="call_via">Позвонить через</string>
     <string name="vacancy_empty">Вакансия не найдена или удалена</string>
     <string name="vacancies_found_count">Найдено %d вакансий</string>
+    <string name="choose_industry">Выбор отрасли</string>
+    <string name="select">Выбрать</string>
     <string name="industry">Отрасль</string>
     <string name="expected_salary">Ожидаемая зарплата</string>
     <string name="do_not_show_without_salary">Не показывать без зарплаты</string>

@@ -14,7 +14,6 @@ import androidx.paging.LoadState
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import okio.IOException
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.domain.models.SearchFilters
@@ -166,10 +165,10 @@ class VacancySearchFragment : Fragment() {
             return
         }
     }
-    
+
     private fun showPagingError(loadStates: CombinedLoadStates) {
         if (loadStates.append is LoadState.Error) {
-            val error = (loadStates.append as LoadState.Error)
+            val error = loadStates.append as LoadState.Error
             val message = when (error.error.message) {
                 "-1" -> getString(R.string.check_internet)
                 else -> getString(R.string.error_happen)

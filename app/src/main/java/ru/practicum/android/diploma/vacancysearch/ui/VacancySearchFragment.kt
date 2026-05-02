@@ -237,8 +237,7 @@ class VacancySearchFragment : Fragment() {
         toolbar.setIcon(
             if (viewModel.getCurrentFilters() != null) {
                 R.drawable.filter_on
-            }
-            else {
+            } else {
                 R.drawable.filter
             }
         )

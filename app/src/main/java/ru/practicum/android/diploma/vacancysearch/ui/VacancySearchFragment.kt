@@ -24,6 +24,13 @@ import ru.practicum.android.diploma.vacancysearch.ui.state.VacancySearchState
 
 class VacancySearchFragment : Fragment() {
 
+    companion object {
+        const val KEY_AREA = "area"
+        const val KEY_INDUSTRY = "industry"
+        const val KEY_SALARY = "salary"
+        const val KEY_ONLY_WITH_SALARY = "only_with_salary"
+    }
+
     private val viewModel by viewModel<VacancySearchViewModel>()
     private var _binding: FragmentVacancySearchBinding? = null
     private val binding get() = _binding!!
@@ -58,13 +65,14 @@ class VacancySearchFragment : Fragment() {
 
         val toolbar = binding.btnBack.menu.findItem(R.id.toolbar_filter)
         toolbar.setOnMenuItemClickListener {
-            findNavController().navigate(R.id.action_vacancySearchFragment_to_filtersFragment,
+            findNavController().navigate(
+                R.id.action_vacancySearchFragment_to_filtersFragment,
                 Bundle().apply {
                     viewModel.getCurrentFilters()?.let { filters ->
-                        filters.areaCountry?.id?.let { putInt("area", it) }
-                        filters.industry?.id?.let { putInt("industry", it) }
-                        filters.salary?.let { putInt("salary", it) }
-                        filters.showSalary?.let { putBoolean("only_with_salary", it) }
+                        filters.areaCountry?.id?.let { putInt(KEY_AREA, it) }
+                        filters.industry?.id?.let { putInt(KEY_INDUSTRY, it) }
+                        filters.salary?.let { putInt(KEY_SALARY, it) }
+                        filters.showSalary?.let { putBoolean(KEY_ONLY_WITH_SALARY, it) }
                     }
                 }
             )
@@ -74,6 +82,11 @@ class VacancySearchFragment : Fragment() {
         initFilters()
         initSearch()
         initVacancyList()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateFilterIcon()
     }
 
     override fun onDestroyView() {
@@ -130,24 +143,24 @@ class VacancySearchFragment : Fragment() {
 
     private fun initFilters() {
         val args = arguments ?: return
-
-        if (args.containsKey("area") ||
-            args.containsKey("industry") ||
-            args.containsKey("salary")) {
-
+        if (args.containsKey(KEY_AREA) ||
+            args.containsKey(KEY_INDUSTRY) ||
+            args.containsKey(KEY_SALARY)) {
             viewModel.applyFilters(
                 SearchFilters(
-                    areaCountry = args.getInt("area")
+                    areaCountry = args.getInt(KEY_AREA)
                         .takeIf { it != 0 }
                         ?.let { SearchFilters.AreaCountry(it, "") },
-                    industry = args.getInt("industry")
+                    industry = args.getInt(KEY_INDUSTRY)
                         .takeIf { it != 0 }
                         ?.let { SearchFilters.Industry(it, "") },
-                    salary = args.getInt("salary").takeIf { it != 0 },
-                    showSalary = args.getBoolean("only_with_salary", false)
+                    salary = args.getInt(KEY_SALARY).takeIf { it != 0 },
+                    showSalary = args.getBoolean(KEY_ONLY_WITH_SALARY, false)
                 )
             )
-        } else return
+        } else {
+            return
+        }
     }
 
     /** Обработчик клика при выборе трека */
@@ -222,8 +235,12 @@ class VacancySearchFragment : Fragment() {
     private fun updateFilterIcon() {
         val toolbar = binding.btnBack.menu.findItem(R.id.toolbar_filter)
         toolbar.setIcon(
-            if (viewModel.getCurrentFilters() != null) R.drawable.filter_on
-            else R.drawable.filter
+            if (viewModel.getCurrentFilters() != null) {
+                R.drawable.filter_on
+            }
+            else {
+                R.drawable.filter
+            }
         )
     }
 

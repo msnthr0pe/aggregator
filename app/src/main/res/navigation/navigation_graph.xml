@@ -74,5 +74,10 @@
         android:id="@+id/chooseIndustryFragment"
         android:name="ru.practicum.android.diploma.chooseindustry.ui.ChooseIndustryFragment"
         android:label="fragment_choose_industry"
-        tools:layout="@layout/fragment_choose_industry" />
+        tools:layout="@layout/fragment_choose_industry" >
+        <action
+            android:id="@+id/action_chooseIndustryFragment_to_filtersFragment"
+            app:destination="@id/filtersFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>

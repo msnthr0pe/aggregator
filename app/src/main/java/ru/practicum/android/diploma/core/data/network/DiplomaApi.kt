@@ -50,7 +50,7 @@ interface DiplomaApi {
     @GET("vacancies")
     suspend fun getVacancies(
         @Header("Authorization") token: String,
-        @QueryMap filters: Map<String, Any?>
+        @QueryMap(encoded = true) filters: Map<String, String>
     ): Response<VacancyCardResponse>
 
     @Headers("Content-Type: application/json")
@@ -60,4 +60,3 @@ interface DiplomaApi {
         @Path("id") id: String
     ): Response<VacancyDetailDto>
 }
-

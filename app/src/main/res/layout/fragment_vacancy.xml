@@ -1,13 +1,184 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".vacancy.ui.VacancyFragment">
 
-    <TextView
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        app:menu="@menu/toolbar_share_like"
+        app:title="@string/vacancy_toolbar_title"
+        app:titleTextAppearance="@style/ToolbarTitleAppearance"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:navigationIcon="@drawable/arrow_left" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/vacancy_contents"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="VacancyFragment" />
+        android:layout_marginTop="@dimen/toolbar_height">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/spacing_md"
+            android:paddingBottom="@dimen/spacing_md">
+
+            <TextView
+                android:id="@+id/vacancy_title"
+                style="@style/TitleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                tools:text="Android-разработчик"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/vacancy_subtitle"
+                style="@style/SubtitleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="от 100000"
+                app:layout_constraintStart_toStartOf="@+id/vacancy_title"
+                app:layout_constraintTop_toBottomOf="@+id/vacancy_title" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/vacancy_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xl"
+                android:backgroundTint="@color/light_gray"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/vacancy_subtitle"
+                app:cardCornerRadius="12dp">
+
+                <include
+                    android:id="@+id/vacancy_card_item"
+                    layout="@layout/vacancy_item" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/required_experience_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xl"
+                style="@style/SmallTitleText"
+                android:text="@string/required_experience_title"
+                app:layout_constraintStart_toStartOf="@+id/vacancy_card"
+                app:layout_constraintTop_toBottomOf="@+id/vacancy_card" />
+
+            <TextView
+                android:id="@+id/required_experience"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xs"
+                style="@style/SmallText"
+                tools:text="От 1 года до 4 лет"
+                app:layout_constraintStart_toStartOf="@+id/required_experience_title"
+                app:layout_constraintTop_toBottomOf="@+id/required_experience_title" />
+
+            <TextView
+                android:id="@+id/schedule"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm"
+                style="@style/SmallText"
+                tools:text="Полная занятость, Удаленная работа"
+                app:layout_constraintStart_toStartOf="@+id/required_experience"
+                app:layout_constraintTop_toBottomOf="@+id/required_experience" />
+
+            <TextView
+                android:id="@+id/vacancy_description"
+                style="@style/SmallText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xxl"
+                tools:text="Длинное описание, которое надо парсить"
+                app:layout_constraintStart_toStartOf="@+id/schedule"
+                app:layout_constraintTop_toBottomOf="@+id/schedule" />
+
+            <TextView
+                android:id="@+id/skills_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/SubtitleText"
+                android:text="@string/key_skills_title"
+                app:layout_constraintStart_toStartOf="@+id/vacancy_description"
+                app:layout_constraintTop_toBottomOf="@+id/vacancy_description" />
+
+            <TextView
+                android:id="@+id/skills"
+                style="@style/SmallText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                tools:text="Несколько навыков"
+                app:layout_constraintStart_toStartOf="@+id/skills_title"
+                app:layout_constraintTop_toBottomOf="@+id/skills_title" />
+
+            <TextView
+                android:id="@+id/contacts_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                style="@style/SubtitleText"
+                android:text="@string/contacts"
+                app:layout_constraintStart_toStartOf="@+id/skills"
+                app:layout_constraintTop_toBottomOf="@+id/skills" />
+
+            <TextView
+                android:id="@+id/contact_name"
+                style="@style/SmallText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                tools:text="Имя контакта"
+                app:layout_constraintStart_toStartOf="@+id/contacts_title"
+                app:layout_constraintTop_toBottomOf="@+id/contacts_title" />
+
+            <TextView
+                android:id="@+id/contacts"
+                style="@style/SmallText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                tools:text="Несколько контактов"
+                app:layout_constraintStart_toStartOf="@+id/contact_name"
+                app:layout_constraintTop_toBottomOf="@+id/contact_name" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/placeholder"
+        app:layout_constraintStart_toStartOf="@id/leftBorder"
+        app:layout_constraintEnd_toEndOf="@id/rightBorder"
+        app:layout_constraintTop_toBottomOf="@id/searchWrapper"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"
+        layout="@layout/placeholder_info" />
+
+    <FrameLayout
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="@dimen/progress_bar_size"
+            android:layout_height="@dimen/progress_bar_size"
+            style="@style/SearchProgressBar" />
+    </FrameLayout>
 
 </FrameLayout>

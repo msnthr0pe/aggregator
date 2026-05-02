@@ -2,10 +2,12 @@
 <resources>
     <dimen name="spacing_xs">4dp</dimen>
     <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_12">12dp</dimen>
     <dimen name="spacing_md">16dp</dimen>
     <dimen name="spacing_lg">20dp</dimen>
     <dimen name="spacing_xl">24dp</dimen>
     <dimen name="spacing_xxl">32dp</dimen>
+    <dimen name="spacing_xxxl">38dp</dimen>
 
     <dimen name="text_size_xs">12sp</dimen>
     <dimen name="text_size_sm">14sp</dimen>
@@ -22,5 +24,10 @@
     <dimen name="radius_xl">28dp</dimen>
 
     <dimen name="toolbar_height">64dp</dimen>
+    <dimen name="search_height">56dp</dimen>
+    <dimen name="vacancy_item_size">48dp</dimen>
+    <dimen name="placeholder_image_height">220dp</dimen>
+    <dimen name="progress_bar_size">36dp</dimen>
+    <dimen name="recycler_vacancy_footer_height">80dp</dimen>
 </resources>
 

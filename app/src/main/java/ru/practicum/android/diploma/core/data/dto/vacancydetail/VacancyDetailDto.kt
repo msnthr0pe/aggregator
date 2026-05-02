@@ -2,12 +2,13 @@ package ru.practicum.android.diploma.core.data.dto.vacancydetail
 
 import ru.practicum.android.diploma.core.data.dto.area.AreaDto
 import ru.practicum.android.diploma.core.data.dto.industry.IndustryDto
+import ru.practicum.android.diploma.core.domain.models.VacancyCardSalary
 
 data class VacancyDetailDto(
     val id: String,
     val name: String,
     val description: String,
-    val salary: SalaryDto?,
+    val salary: VacancyCardSalary?,
     val address: AddressDto?,
     val experience: ExperienceDto?,
     val schedule: ScheduleDto?,
@@ -19,12 +20,6 @@ data class VacancyDetailDto(
     val url: String,
     val industry: IndustryDto,
 ) {
-    data class SalaryDto(
-        val from: Int?,
-        val to: Int?,
-        val currency: String?
-    )
-
     data class AddressDto(
         val id: String,
         val city: String,

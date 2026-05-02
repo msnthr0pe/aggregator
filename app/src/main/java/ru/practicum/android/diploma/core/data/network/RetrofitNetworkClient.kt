@@ -16,6 +16,7 @@ class RetrofitNetworkClient(
     private val context: Context
 ) : NetworkClient {
     companion object {
+        const val CODE_200 = 200
         const val CODE_400 = 400
         const val CODE_500 = 500
     }
@@ -27,19 +28,7 @@ class RetrofitNetworkClient(
 
         return when (dto) {
             is VacancyCardRequest -> {
-                val filters = mapOf(
-                    "token" to dto.token,
-                    "area" to dto.area,
-                    "industry" to dto.industry,
-                    "text" to dto.text,
-                    "salary" to dto.salary,
-                    "page" to dto.page,
-                    "onlyWithSalary" to dto.onlyWithSalary
-                )
-                handle { diplomaApi.getVacancies(
-                    token = dto.token,
-                    filters = filters,
-                ) }
+                handle { diplomaApi.getVacancies(token = dto.token, filters = dto.filters) }
             }
 
             is AreaRequest -> {

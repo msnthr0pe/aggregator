@@ -1,9 +1,13 @@
 [versions]
 
+coil = "2.7.0"
+coilOkhttp = "2.6.0"
 compileSdk = "36"
 java = "VERSION_17"
+jsoup = "1.22.2"
 material = "1.13.0"
 minSdk = "26"
+pagingCommon = "3.4.2"
 targetSdk = "36"
 appcompat = "1.7.1"
 activity = "1.13.0"
@@ -21,10 +25,14 @@ junit4 = "4.13.2"
 junitExt = "1.1.5"
 detekt = "1.23.8"
 detektTwitterComposeRules = "0.0.26"
+pagingRuntimeKtx = "3.4.2"
 
 [libraries]
+androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "pagingCommon" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+coil-svg = { module = "io.coil-kt:coil-svg", version.ref = "coil" }
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
 constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
@@ -36,6 +44,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "compiler" }
+jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
@@ -51,5 +60,6 @@ staticAnalysis-detektLibraries = { module = "io.gitlab.arturbosch.detekt:detekt-
 staticAnalysis-detektPlugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 staticAnalysis-detektTest = { module = "io.gitlab.arturbosch.detekt:detekt-test", version.ref = "detekt" }
 staticAnalysis-detektTwitterComposeRules = { module = "com.twitter.compose.rules:detekt", version.ref = "detektTwitterComposeRules" }
+androidx-paging-runtime-ktx = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "pagingRuntimeKtx" }
 
 [bundles]

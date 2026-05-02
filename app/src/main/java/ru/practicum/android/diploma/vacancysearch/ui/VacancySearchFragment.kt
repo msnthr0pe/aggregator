@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.core.domain.models.SearchFilters
 import ru.practicum.android.diploma.core.domain.models.VacancyCard
 import ru.practicum.android.diploma.core.ui.root.RootActivity
 import ru.practicum.android.diploma.core.ui.state.PlaceholderType
@@ -22,6 +23,13 @@ import ru.practicum.android.diploma.vacancy.ui.VacancyFragment
 import ru.practicum.android.diploma.vacancysearch.ui.state.VacancySearchState
 
 class VacancySearchFragment : Fragment() {
+
+    companion object {
+        const val KEY_AREA = "area"
+        const val KEY_INDUSTRY = "industry"
+        const val KEY_SALARY = "salary"
+        const val KEY_ONLY_WITH_SALARY = "only_with_salary"
+    }
 
     private val viewModel by viewModel<VacancySearchViewModel>()
     private var _binding: FragmentVacancySearchBinding? = null
@@ -52,16 +60,33 @@ class VacancySearchFragment : Fragment() {
 
         viewModel.observePage().observe(viewLifecycleOwner) {
             renderActivity(it)
+            updateFilterIcon()
         }
 
         val toolbar = binding.btnBack.menu.findItem(R.id.toolbar_filter)
         toolbar.setOnMenuItemClickListener {
-            findNavController().navigate(R.id.action_vacancySearchFragment_to_filtersFragment)
+            findNavController().navigate(
+                R.id.action_vacancySearchFragment_to_filtersFragment,
+                Bundle().apply {
+                    viewModel.getCurrentFilters()?.let { filters ->
+                        filters.areaCountry?.id?.let { putInt(KEY_AREA, it) }
+                        filters.industry?.id?.let { putInt(KEY_INDUSTRY, it) }
+                        filters.salary?.let { putInt(KEY_SALARY, it) }
+                        filters.showSalary?.let { putBoolean(KEY_ONLY_WITH_SALARY, it) }
+                    }
+                }
+            )
             true
         }
 
+        initFilters()
         initSearch()
         initVacancyList()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateFilterIcon()
     }
 
     override fun onDestroyView() {
@@ -113,6 +138,28 @@ class VacancySearchFragment : Fragment() {
                     viewModel.updatePageLiveData(VacancySearchState.Success())
                 }
             }
+        }
+    }
+
+    private fun initFilters() {
+        val args = arguments ?: return
+        if (args.containsKey(KEY_AREA) ||
+            args.containsKey(KEY_INDUSTRY) ||
+            args.containsKey(KEY_SALARY)) {
+            viewModel.applyFilters(
+                SearchFilters(
+                    areaCountry = args.getInt(KEY_AREA)
+                        .takeIf { it != 0 }
+                        ?.let { SearchFilters.AreaCountry(it, "") },
+                    industry = args.getInt(KEY_INDUSTRY)
+                        .takeIf { it != 0 }
+                        ?.let { SearchFilters.Industry(it, "") },
+                    salary = args.getInt(KEY_SALARY).takeIf { it != 0 },
+                    showSalary = args.getBoolean(KEY_ONLY_WITH_SALARY, false)
+                )
+            )
+        } else {
+            return
         }
     }
 
@@ -183,6 +230,17 @@ class VacancySearchFragment : Fragment() {
                 text = rootActivity.getString(R.string.vacancies_found_count, foundVacanciesAmount)
             }
         }
+    }
+
+    private fun updateFilterIcon() {
+        val toolbar = binding.btnBack.menu.findItem(R.id.toolbar_filter)
+        toolbar.setIcon(
+            if (viewModel.getCurrentFilters() != null) {
+                R.drawable.filter_on
+            } else {
+                R.drawable.filter
+            }
+        )
     }
 
     /** Отрисовка placeholder */

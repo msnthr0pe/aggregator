@@ -146,24 +146,28 @@ class VacancySearchFragment : Fragment() {
 
     private fun initFilters() {
         val args = arguments ?: return
-        if (args.containsKey(KEY_AREA) ||
-            args.containsKey(KEY_INDUSTRY) ||
-            args.containsKey(KEY_SALARY)) {
-            viewModel.applyFilters(
-                SearchFilters(
-                    areaCountry = args.getInt(KEY_AREA)
-                        .takeIf { it != 0 }
-                        ?.let { SearchFilters.AreaCountry(it, "") },
-                    industry = args.getInt(KEY_INDUSTRY)
-                        .takeIf { it != 0 }
-                        ?.let { SearchFilters.Industry(it, "") },
-                    salary = args.getInt(KEY_SALARY).takeIf { it != 0 },
-                    showSalary = args.getBoolean(KEY_ONLY_WITH_SALARY, false)
-                )
-            )
-        } else {
+        val hasArea = args.containsKey(KEY_AREA)
+        val hasIndustry = args.containsKey(KEY_INDUSTRY)
+        val hasSalary = args.containsKey(KEY_SALARY)
+        val onlyWithSalary = args.getBoolean(KEY_ONLY_WITH_SALARY, false)
+
+        val hasAnyFilter = hasArea || hasIndustry || hasSalary || onlyWithSalary
+        if (!hasAnyFilter) {
             return
         }
+
+        viewModel.applyFilters(
+            SearchFilters(
+                areaCountry = args.getInt(KEY_AREA, 0)
+                    .takeIf { it != 0 }
+                    ?.let { SearchFilters.AreaCountry(it, "") },
+                industry = args.getInt(KEY_INDUSTRY, 0)
+                    .takeIf { it != 0 }
+                    ?.let { SearchFilters.Industry(it, "") },
+                salary = args.getInt(KEY_SALARY, 0).takeIf { it != 0 },
+                showSalary = onlyWithSalary
+            )
+        )
     }
 
     private fun showPagingError(loadStates: CombinedLoadStates) {

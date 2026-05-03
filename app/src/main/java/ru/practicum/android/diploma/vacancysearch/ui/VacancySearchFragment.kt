@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.flow.collectLatest
@@ -117,6 +119,7 @@ class VacancySearchFragment : Fragment() {
         // Обработка для заглушек
         lifecycleScope.launch {
             vacancyAdapter.loadStateFlow.collectLatest { loadStates ->
+                showPagingError(loadStates)
                 val isFirstLoading = loadStates.refresh is LoadState.Loading
                 val isListEmpty = vacancyAdapter.itemCount == 0
                 val hasError = loadStates.refresh is LoadState.Error
@@ -143,23 +146,38 @@ class VacancySearchFragment : Fragment() {
 
     private fun initFilters() {
         val args = arguments ?: return
-        if (args.containsKey(KEY_AREA) ||
-            args.containsKey(KEY_INDUSTRY) ||
-            args.containsKey(KEY_SALARY)) {
-            viewModel.applyFilters(
-                SearchFilters(
-                    areaCountry = args.getInt(KEY_AREA)
-                        .takeIf { it != 0 }
-                        ?.let { SearchFilters.AreaCountry(it, "") },
-                    industry = args.getInt(KEY_INDUSTRY)
-                        .takeIf { it != 0 }
-                        ?.let { SearchFilters.Industry(it, "") },
-                    salary = args.getInt(KEY_SALARY).takeIf { it != 0 },
-                    showSalary = args.getBoolean(KEY_ONLY_WITH_SALARY, false)
-                )
-            )
-        } else {
+        val hasArea = args.containsKey(KEY_AREA)
+        val hasIndustry = args.containsKey(KEY_INDUSTRY)
+        val hasSalary = args.containsKey(KEY_SALARY)
+        val onlyWithSalary = args.getBoolean(KEY_ONLY_WITH_SALARY, false)
+
+        val hasAnyFilter = hasArea || hasIndustry || hasSalary || onlyWithSalary
+        if (!hasAnyFilter) {
             return
+        }
+
+        viewModel.applyFilters(
+            SearchFilters(
+                areaCountry = args.getInt(KEY_AREA, 0)
+                    .takeIf { it != 0 }
+                    ?.let { SearchFilters.AreaCountry(it, "") },
+                industry = args.getInt(KEY_INDUSTRY, 0)
+                    .takeIf { it != 0 }
+                    ?.let { SearchFilters.Industry(it, "") },
+                salary = args.getInt(KEY_SALARY, 0).takeIf { it != 0 },
+                showSalary = onlyWithSalary
+            )
+        )
+    }
+
+    private fun showPagingError(loadStates: CombinedLoadStates) {
+        if (loadStates.append is LoadState.Error) {
+            val error = loadStates.append as LoadState.Error
+            val message = when (error.error.message) {
+                "-1" -> getString(R.string.check_internet)
+                else -> getString(R.string.error_happen)
+            }
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
         }
     }
 

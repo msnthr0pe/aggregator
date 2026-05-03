@@ -2,6 +2,13 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.PracticumAndroidDiploma" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="toolbarStyle">@style/CustomToolbar</item>
+        <item name="defaultTextColor">@color/white</item>
+        <item name="defaultBackground">@color/black</item>
+
+        <item name="android:windowBackground">?attr/defaultBackground</item>
+
+        <item name="searchBackground">@color/gray</item>
+        <item name="searchTint">@color/white</item>
     </style>
 
     <!-- Стили для Toolbar -->

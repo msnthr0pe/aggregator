@@ -142,25 +142,29 @@ class VacancySearchFragment : Fragment() {
     }
 
     private fun initFilters() {
-        val args = arguments ?: return
-        if (args.containsKey(KEY_AREA) ||
-            args.containsKey(KEY_INDUSTRY) ||
-            args.containsKey(KEY_SALARY)) {
-            viewModel.applyFilters(
-                SearchFilters(
-                    areaCountry = args.getInt(KEY_AREA)
-                        .takeIf { it != 0 }
-                        ?.let { SearchFilters.AreaCountry(it, "") },
-                    industry = args.getInt(KEY_INDUSTRY)
-                        .takeIf { it != 0 }
-                        ?.let { SearchFilters.Industry(it, "") },
-                    salary = args.getInt(KEY_SALARY).takeIf { it != 0 },
-                    showSalary = args.getBoolean(KEY_ONLY_WITH_SALARY, false)
-                )
+        val navController = findNavController()
+
+        val bundle = navController.currentBackStackEntry
+            ?.savedStateHandle
+            ?.get<Bundle>("filters_result")
+            ?: return
+
+        // если нужно, чтобы не применялось повторно
+        navController.currentBackStackEntry?.savedStateHandle?.remove<Bundle>("filters_result")
+
+        viewModel.applyFilters(
+            SearchFilters(
+                areaCountry = bundle.getInt(KEY_AREA)
+                    .takeIf { it != 0 }
+                    ?.let { SearchFilters.AreaCountry(it, "") },
+                industry = bundle.getInt(KEY_INDUSTRY)
+                    .takeIf { it != 0 }
+                    ?.let { SearchFilters.Industry(it, "") },
+                salary = bundle.getInt(KEY_SALARY).takeIf { it != 0 },
+                showSalary = bundle.getBoolean(KEY_ONLY_WITH_SALARY, false)
             )
-        } else {
-            return
-        }
+        )
+
     }
 
     /** Обработчик клика при выборе трека */

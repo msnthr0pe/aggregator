@@ -74,7 +74,16 @@ class VacancySearchViewModel(
     )
 
     fun applyFilters(filters: SearchFilters?) {
-        currentFilters = filters
+        currentFilters = if (
+            filters?.industry != null ||
+            filters?.salary != null ||
+            filters?.showSalary != false
+        ) {
+            filters
+        } else {
+            null
+        }
+
         if (latestSearchQuery.isNotBlank()) {
             _searchQuery.value = latestSearchQuery
         }

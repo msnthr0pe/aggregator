@@ -89,6 +89,7 @@
             android:id="@+id/desired_salary"
             android:layout_width="match_parent"
             android:layout_height="@dimen/search_height"
+            android:inputType="number"
             android:hint="@string/enter_sum"
             style="@style/SearchEditText" />
 
@@ -143,12 +144,14 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/apply_button"
             android:layout_width="match_parent"
             android:layout_height="@dimen/big_button_height"
             style="@style/BigButton"
             android:text="@string/apply"/>
 
         <TextView
+            android:id="@+id/discard_button"
             android:layout_width="match_parent"
             android:layout_height="@dimen/big_button_height"
             style="@style/BigButton"

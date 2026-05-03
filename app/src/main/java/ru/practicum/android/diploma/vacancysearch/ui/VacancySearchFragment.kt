@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.flow.collectLatest
@@ -117,6 +119,7 @@ class VacancySearchFragment : Fragment() {
         // Обработка для заглушек
         lifecycleScope.launch {
             vacancyAdapter.loadStateFlow.collectLatest { loadStates ->
+                showPagingError(loadStates)
                 val isFirstLoading = loadStates.refresh is LoadState.Loading
                 val isListEmpty = vacancyAdapter.itemCount == 0
                 val hasError = loadStates.refresh is LoadState.Error
@@ -160,6 +163,17 @@ class VacancySearchFragment : Fragment() {
             )
         } else {
             return
+        }
+    }
+
+    private fun showPagingError(loadStates: CombinedLoadStates) {
+        if (loadStates.append is LoadState.Error) {
+            val error = loadStates.append as LoadState.Error
+            val message = when (error.error.message) {
+                "-1" -> getString(R.string.check_internet)
+                else -> getString(R.string.error_happen)
+            }
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
         }
     }
 

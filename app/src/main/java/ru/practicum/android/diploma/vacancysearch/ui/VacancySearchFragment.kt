@@ -151,7 +151,8 @@ class VacancySearchFragment : Fragment() {
         val hasSalary = args.containsKey(KEY_SALARY)
         val onlyWithSalary = args.getBoolean(KEY_ONLY_WITH_SALARY, false)
 
-        if (!hasArea && !hasIndustry && !hasSalary && !onlyWithSalary) {
+        val hasAnyFilter = hasArea || hasIndustry || hasSalary || onlyWithSalary
+        if (!hasAnyFilter) {
             return
         }
 

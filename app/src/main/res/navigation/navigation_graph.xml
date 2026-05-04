@@ -47,6 +47,9 @@
         <action
             android:id="@+id/action_filtersFragment_to_chooseIndustryFragment"
             app:destination="@id/chooseIndustryFragment" />
+        <action
+            android:id="@+id/action_filtersFragment_to_vacancySearchFragment"
+            app:destination="@id/vacancySearchFragment" />
     </fragment>
     <fragment
         android:id="@+id/chooseWorkPlaceFragment"

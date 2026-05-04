@@ -137,6 +137,7 @@ class FiltersFragment : Fragment() {
 
     private fun FragmentFiltersBinding.setToolbarNavigationListener() {
         toolbar.setNavigationOnClickListener {
+            viewModel.resetFilters()
             sendResultAndClose()
         }
     }
@@ -146,6 +147,7 @@ class FiltersFragment : Fragment() {
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
+                    viewModel.resetFilters()
                     sendResultAndClose()
                 }
             }

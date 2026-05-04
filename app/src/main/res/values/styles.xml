@@ -17,7 +17,7 @@
         <item name="itemTextColor">@color/bottom_navigation_colors</item>
         <item name="itemTextAppearanceActive">@style/TextAppearance.CustomBottomNav.Active</item>
         <item name="itemTextAppearanceInactive">@style/TextAppearance.CustomBottomNav.Inactive</item>
-        <item name="backgroundTint">@color/white</item>
+        <item name="backgroundTint">?attr/defaultBackground</item>
     </style>
 
     <style name="TextAppearance.CustomBottomNav.Active" parent="TextAppearance.AppCompat.Caption">
@@ -56,31 +56,31 @@
     <style name="FavoritesPlaceholder">
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textSize">@dimen/text_size_xl</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">?attr/defaultTextColor</item>
     </style>
 
     <style name="TitleText">
         <item name="android:fontFamily">@font/ys_display_bold</item>
         <item name="android:textSize">@dimen/text_size_xxl</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">?attr/defaultTextColor</item>
     </style>
 
     <style name="SubtitleText">
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textSize">@dimen/text_size_xl</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">?attr/defaultTextColor</item>
     </style>
 
     <style name="SmallTitleText">
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textSize">@dimen/text_size_md</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">?attr/defaultTextColor</item>
     </style>
 
     <style name="SmallText">
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textSize">@dimen/text_size_md</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">?attr/defaultTextColor</item>
     </style>
 
     <style name="SmallHintText">
@@ -99,7 +99,7 @@
     <style name="PlaceholderInfo">
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textSize">@dimen/text_size_xl</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">?attr/defaultTextColor</item>
     </style>
 
     <style name="SearchLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -110,14 +110,15 @@
         <item name="boxCornerRadiusBottomStart">@dimen/radius_md</item>
         <item name="boxCornerRadiusTopEnd">@dimen/radius_md</item>
         <item name="boxCornerRadiusTopStart">@dimen/radius_md</item>
-        <item name="boxBackgroundColor">@color/light_gray</item>
+        <item name="boxBackgroundColor">?attr/searchBackground</item>
+        <item name="endIconTint">@color/black</item>
         <item name="boxStrokeWidth">0dp</item>
         <item name="boxStrokeWidthFocused">0dp</item>
     </style>
 
     <style name="SearchEditText">
         <item name="android:textColor">@color/black</item>
-        <item name="android:textColorHint">@color/gray</item>
+        <item name="android:textColorHint">?attr/searchTint</item>
         <item name="android:inputType">text</item>
         <item name="android:maxLines">1</item>
         <item name="android:singleLine">true</item>

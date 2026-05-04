@@ -11,6 +11,6 @@
         android:layout_gravity="center_vertical"
         android:layout_marginStart="20dp"
         style="@style/VacancyItemTitle"
-        android:text="Илья Павловский\n\nАртем Сахофин\n\nМаксим Петров" />
+        android:text="Илья Павловский\n\nАртем Сафохин\n\nМаксим Петров" />
 
 </FrameLayout>

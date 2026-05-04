@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="defaultTextColor" format="color" />
+    <attr name="defaultBackground" format="color" />
+    <attr name="defaultHintSearch" format="color" />
+
+    <attr name="searchBackground" format="color" />
+    <attr name="searchTint" format="color" />
+</resources>

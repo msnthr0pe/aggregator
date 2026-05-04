@@ -156,15 +156,7 @@ class VacancySearchFragment : Fragment() {
 
         navController.currentBackStackEntry?.savedStateHandle?.remove<Bundle>("filters_result")
 
-        val hasArea = bundle.containsKey(KEY_AREA)
-        val hasIndustry = bundle.containsKey(KEY_INDUSTRY_ID)
-        val hasSalary = bundle.containsKey(KEY_SALARY)
         val onlyWithSalary = bundle.getBoolean(KEY_ONLY_WITH_SALARY, false)
-
-        val hasAnyFilter = hasArea || hasIndustry || hasSalary || onlyWithSalary
-        if (!hasAnyFilter) {
-            return
-        }
 
         viewModel.applyFilters(
             SearchFilters(
@@ -173,7 +165,7 @@ class VacancySearchFragment : Fragment() {
                     ?.let { SearchFilters.AreaCountry(it, "") },
                 industry = bundle.getInt(KEY_INDUSTRY_ID, 0)
                     .takeIf { it != 0 }
-                    ?.let { SearchFilters.Industry(it, "") },
+                    ?.let { SearchFilters.Industry(it, bundle.getString(KEY_INDUSTRY_NAME, "")) },
                 salary = bundle.getInt(KEY_SALARY, 0).takeIf { it != 0 },
                 showSalary = onlyWithSalary
             )

@@ -126,6 +126,7 @@ class FiltersFragment : Fragment() {
                 setIndustryLayoutMode(isEmpty = true)
             }
             configureApplyChangesLayoutVisibility(forceHide = true)
+            sendResultAndClose()
         }
     }
 

@@ -11,18 +11,21 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
-import com.bumptech.glide.Glide
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
-import ru.practicum.android.diploma.core.domain.models.SearchFilters
 import ru.practicum.android.diploma.core.domain.models.VacancyCard
 import ru.practicum.android.diploma.core.ui.root.RootActivity
-import ru.practicum.android.diploma.core.ui.state.PlaceholderType
 import ru.practicum.android.diploma.databinding.FragmentVacancySearchBinding
 import ru.practicum.android.diploma.vacancy.ui.VacancyFragment
 import ru.practicum.android.diploma.vacancysearch.ui.state.VacancySearchState
+import ru.practicum.android.diploma.vacancysearch.util.getFilters
+import ru.practicum.android.diploma.vacancysearch.util.showEmpty
+import ru.practicum.android.diploma.vacancysearch.util.showError
+import ru.practicum.android.diploma.vacancysearch.util.showLoading
+import ru.practicum.android.diploma.vacancysearch.util.showNothing
+import ru.practicum.android.diploma.vacancysearch.util.showSuccess
 
 class VacancySearchFragment : Fragment() {
 
@@ -156,19 +159,8 @@ class VacancySearchFragment : Fragment() {
 
         navController.currentBackStackEntry?.savedStateHandle?.remove<Bundle>("filters_result")
 
-        val onlyWithSalary = bundle.getBoolean(KEY_ONLY_WITH_SALARY, false)
-
         viewModel.applyFilters(
-            SearchFilters(
-                areaCountry = bundle.getInt(KEY_AREA, 0)
-                    .takeIf { it != 0 }
-                    ?.let { SearchFilters.AreaCountry(it, "") },
-                industry = bundle.getInt(KEY_INDUSTRY_ID, 0)
-                    .takeIf { it != 0 }
-                    ?.let { SearchFilters.Industry(it, bundle.getString(KEY_INDUSTRY_NAME, "")) },
-                salary = bundle.getInt(KEY_SALARY, 0).takeIf { it != 0 },
-                showSalary = onlyWithSalary
-            )
+            getFilters(bundle)
         )
     }
 
@@ -191,67 +183,6 @@ class VacancySearchFragment : Fragment() {
         )
     }
 
-    /** Изначальное отображение страницы */
-    private fun showNothing() {
-        _binding?.recyclerList?.visibility = View.GONE
-        _binding?.buttonCount?.visibility = View.GONE
-        _binding?.progressBar?.visibility = View.GONE
-        _binding?.placeholder?.placeholderInfo?.visibility = View.VISIBLE
-        _binding?.buttonCount?.visibility = View.GONE
-
-        initPlaceholder(PlaceholderType.NOTHING, "")
-    }
-
-    /** Отображение пустой страницы */
-    private fun showEmpty() {
-        _binding?.recyclerList?.visibility = View.GONE
-        _binding?.buttonCount?.visibility = View.GONE
-        _binding?.progressBar?.visibility = View.GONE
-        _binding?.placeholder?.placeholderInfo?.visibility = View.VISIBLE
-        _binding?.buttonCount?.visibility = View.GONE
-
-        initPlaceholder(PlaceholderType.EMPTY, getString(R.string.favorites_error_load))
-    }
-
-    /** Отображение загрузки */
-    private fun showLoading() {
-        _binding?.recyclerList?.visibility = View.GONE
-        _binding?.buttonCount?.visibility = View.GONE
-        _binding?.progressBar?.visibility = View.VISIBLE
-        _binding?.placeholder?.placeholderInfo?.visibility = View.GONE
-        _binding?.buttonCount?.visibility = View.GONE
-    }
-
-    /** Отображение ошибки */
-    private fun showError(serverCode: String) {
-        _binding?.recyclerList?.visibility = View.GONE
-        _binding?.buttonCount?.visibility = View.GONE
-        _binding?.progressBar?.visibility = View.GONE
-        _binding?.placeholder?.placeholderInfo?.visibility = View.VISIBLE
-        _binding?.buttonCount?.visibility = View.GONE
-
-        val message = when (serverCode) {
-            "-1" -> getString(R.string.no_internet)
-            else -> getString(R.string.error)
-        }
-
-        initPlaceholder(PlaceholderType.ERROR, message)
-    }
-
-    /** Отображение списка вакансий */
-    private fun showSuccess(foundVacanciesAmount: Int) {
-        _binding?.recyclerList?.visibility = View.VISIBLE
-        _binding?.buttonCount?.visibility = View.GONE
-        _binding?.progressBar?.visibility = View.GONE
-        _binding?.placeholder?.placeholderInfo?.visibility = View.GONE
-        if (foundVacanciesAmount != -1) {
-            _binding?.buttonCount?.apply {
-                visibility = View.VISIBLE
-                text = rootActivity.getString(R.string.vacancies_found_count, foundVacanciesAmount)
-            }
-        }
-    }
-
     private fun updateFilterIcon() {
         val toolbar = binding.btnBack.menu.findItem(R.id.toolbar_filter)
         toolbar.setIcon(
@@ -263,31 +194,14 @@ class VacancySearchFragment : Fragment() {
         )
     }
 
-    /** Отрисовка placeholder */
-    private fun initPlaceholder(type: PlaceholderType, message: String) {
-        val imgElement = binding.placeholder.placeholderInfoImg
-        val textElement = binding.placeholder.placeholderInfoText
-        val imgUrl = when (type) {
-            PlaceholderType.NOTHING -> R.drawable.placeholder
-            PlaceholderType.ERROR -> R.drawable.placeholder_2
-            PlaceholderType.EMPTY -> R.drawable.favorites_error_load
-        }
-
-        Glide.with(this)
-            .load(imgUrl)
-            .into(imgElement)
-
-        textElement.text = message
-    }
-
     /** Рендер состояния страницы */
     private fun renderActivity(state: VacancySearchState) {
         when (state) {
-            is VacancySearchState.Nothing -> showNothing()
-            is VacancySearchState.Empty -> showEmpty()
-            is VacancySearchState.Loading -> showLoading()
-            is VacancySearchState.Error -> showError(state.serverCode)
-            is VacancySearchState.Success -> showSuccess(state.foundItems)
+            is VacancySearchState.Nothing -> binding.showNothing(rootActivity)
+            is VacancySearchState.Empty -> binding.showEmpty(rootActivity)
+            is VacancySearchState.Loading -> binding.showLoading()
+            is VacancySearchState.Error -> binding.showError(rootActivity, state.serverCode)
+            is VacancySearchState.Success -> binding.showSuccess(rootActivity, state.foundItems)
         }
     }
 }

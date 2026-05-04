@@ -8,21 +8,31 @@ class FiltersViewModel : ViewModel() {
 
     private var areaCountryId: Int? = null
     private var industryId: Int? = null
+    private var industryName: String? = null
     private var salary: Int? = null
     private var showSalary: Boolean? = null
 
     fun setFilters(searchFilters: SearchFilters) {
         filters = searchFilters
+        industryId = searchFilters.industry?.id
+        industryName = searchFilters.industry?.name
     }
 
     fun updateFilters(
         areaCountryId: Int? = null,
         industryId: Int? = null,
+        industryName: String? = null,
         salary: Int? = null,
         showSalary: Boolean? = null,
+        clearIndustrySelection: Boolean = false
     ) {
         areaCountryId?.let { this.areaCountryId = it }
         industryId?.let { this.industryId = it }
+        industryName?.let { this.industryName = it }
+        if (clearIndustrySelection) {
+            this.industryId = null
+            this.industryName = null
+        }
         salary?.let { this.salary = it }
         showSalary?.let { this.showSalary = it }
         updateFilters()
@@ -33,7 +43,10 @@ class FiltersViewModel : ViewModel() {
             SearchFilters.AreaCountry(it)
         }
         val industry = industryId?.let {
-            SearchFilters.Industry(it)
+            SearchFilters.Industry(
+                it,
+                industryName.orEmpty()
+            )
         }
         val searchFilters = SearchFilters(
             areaCountry = areaCountry,

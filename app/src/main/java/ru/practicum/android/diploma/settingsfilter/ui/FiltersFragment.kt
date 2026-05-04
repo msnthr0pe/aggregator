@@ -4,17 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
-import ru.practicum.android.diploma.core.domain.models.SearchFilters
 import ru.practicum.android.diploma.databinding.FragmentFiltersBinding
 import ru.practicum.android.diploma.settingsfilter.ui.presentation.FiltersViewModel
+import ru.practicum.android.diploma.settingsfilter.ui.util.getFilters
 import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_AREA
-import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_INDUSTRY
+import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_INDUSTRY_ID
+import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_INDUSTRY_NAME
 import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_ONLY_WITH_SALARY
 import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_SALARY
 
@@ -36,17 +38,6 @@ class FiltersFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Тестовый пример. Можно не передавать Bundle
-//        binding.button.setOnClickListener {
-//            findNavController().navigate(
-//                R.id.action_filtersFragment_to_chooseIndustryFragment
-//                Bundle().apply {
-//                    putInt("id", 15)
-//                    putString("name", "Автомобильный бизнес")
-//                }
-//            )
-//        }
-
         initFilters()
         setupListeners()
     }
@@ -57,6 +48,10 @@ class FiltersFragment : Fragment() {
         setFilters(args)
         with(binding) {
             val currentFilters = viewModel.getCurrentFilters()
+            currentFilters?.industry?.let {
+                setIndustryLayoutMode(isEmpty = false)
+                filledIndustryText.text = it.name
+            }
             currentFilters?.salary?.let {
                 desiredSalary.setText(it.toString())
                 salaryHint.setTextColor(resources.getColor(R.color.black))
@@ -67,21 +62,13 @@ class FiltersFragment : Fragment() {
 
     private fun setFilters(args: Bundle) {
         viewModel.setFilters(
-            SearchFilters(
-                areaCountry = args.getInt(KEY_AREA)
-                    .takeIf { it != 0 }
-                    ?.let { SearchFilters.AreaCountry(it, "") },
-                industry = args.getInt(KEY_INDUSTRY)
-                    .takeIf { it != 0 }
-                    ?.let { SearchFilters.Industry(it, "") },
-                salary = args.getInt(KEY_SALARY).takeIf { it != 0 },
-                showSalary = args.getBoolean(KEY_ONLY_WITH_SALARY, false)
-            )
+            getFilters(args)
         )
     }
 
     private fun setupListeners() {
         configureApplyChangesLayoutVisibility(isInitial = true)
+        setBackPressedListener()
         with(binding) {
             setToolbarNavigationListener()
             setDesiredSalaryFocusListener()
@@ -89,7 +76,27 @@ class FiltersFragment : Fragment() {
             setApplyButtonListener()
             setDiscardButtonListener()
             setCheckButtonListener()
+            setIndustryButtonListener()
         }
+    }
+
+    private fun FragmentFiltersBinding.setIndustryButtonListener() {
+        industryButton.setOnClickListener {
+            sendResultAndOpenIndustries()
+        }
+        filledIndustryIconCross.setOnClickListener {
+            filledIndustryText.text = null
+            setIndustryLayoutMode(isEmpty = true)
+            configureApplyChangesLayoutVisibility()
+        }
+    }
+
+    private fun FragmentFiltersBinding.setIndustryLayoutMode(isEmpty: Boolean) {
+        emptyIndustryText.isVisible = isEmpty
+        emptyIndustryIcon.isVisible = isEmpty
+        filledIndustryText.isVisible = !isEmpty
+        filledIndustryHint.isVisible = !isEmpty
+        filledIndustryIconCross.isVisible = !isEmpty
     }
 
     private fun FragmentFiltersBinding.setApplyButtonListener() {
@@ -103,7 +110,9 @@ class FiltersFragment : Fragment() {
             viewModel.updateFilters(
                 salary = desiredSalary,
                 showSalary = check.isChecked,
+                clearIndustrySelection = filledIndustryText.text.isEmpty()
             )
+            sendResultAndClose()
         }
     }
 
@@ -113,6 +122,8 @@ class FiltersFragment : Fragment() {
             with(binding) {
                 desiredSalary.setText(null)
                 check.isChecked = false
+                filledIndustryText.text = null
+                setIndustryLayoutMode(isEmpty = true)
             }
             configureApplyChangesLayoutVisibility(forceHide = true)
         }
@@ -126,23 +137,52 @@ class FiltersFragment : Fragment() {
 
     private fun FragmentFiltersBinding.setToolbarNavigationListener() {
         toolbar.setNavigationOnClickListener {
-            val navController = findNavController()
+            sendResultAndClose()
+        }
+    }
 
-            val result = Bundle().apply {
-                viewModel.getCurrentFilters()?.let { filters ->
-                    filters.areaCountry?.id?.let { putInt(KEY_AREA, it) }
-                    filters.industry?.id?.let { putInt(KEY_INDUSTRY, it) }
-                    filters.salary?.let { putInt(KEY_SALARY, it) }
-                    filters.showSalary?.let { putBoolean(KEY_ONLY_WITH_SALARY, it) }
+    private fun setBackPressedListener() {
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    sendResultAndClose()
                 }
             }
+        )
+    }
 
-            navController.previousBackStackEntry
-                ?.savedStateHandle
-                ?.set("filters_result", result)
+    private fun sendResultAndClose() {
+        val navController = findNavController()
 
-            navController.popBackStack()
+        val result = getResultFilterBundle()
+
+        navController.previousBackStackEntry
+            ?.savedStateHandle
+            ?.set("filters_result", result)
+
+        navController.popBackStack()
+    }
+
+    private fun getResultFilterBundle(): Bundle {
+        return Bundle().apply {
+            viewModel.getCurrentFilters()?.let { filters ->
+                filters.areaCountry?.id?.let { putInt(KEY_AREA, it) }
+                filters.industry?.id?.let { putInt(KEY_INDUSTRY_ID, it) }
+                filters.industry?.name?.let { putString(KEY_INDUSTRY_NAME, it) }
+                filters.salary?.let { putInt(KEY_SALARY, it) }
+                filters.showSalary?.let { putBoolean(KEY_ONLY_WITH_SALARY, it) }
+            }
         }
+    }
+
+    private fun sendResultAndOpenIndustries() {
+        val navController = findNavController()
+
+        navController.navigate(
+            R.id.action_filtersFragment_to_chooseIndustryFragment,
+            getResultFilterBundle(),
+        )
     }
 
     private fun configureApplyChangesLayoutVisibility(forceHide: Boolean = false, isInitial: Boolean = false) {
@@ -170,7 +210,7 @@ class FiltersFragment : Fragment() {
             } else {
                 salary != currentFilters?.salary ||
                     check.isChecked != showSalary ||
-                    filledIndustryText.text.isNotEmpty()
+                    filledIndustryText.text != currentFilters.industry?.name
             }
         }
     }

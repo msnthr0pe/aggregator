@@ -26,7 +26,8 @@ class VacancySearchFragment : Fragment() {
 
     companion object {
         const val KEY_AREA = "area"
-        const val KEY_INDUSTRY = "industry"
+        const val KEY_INDUSTRY_ID = "industry"
+        const val KEY_INDUSTRY_NAME = "industry_name"
         const val KEY_SALARY = "salary"
         const val KEY_ONLY_WITH_SALARY = "only_with_salary"
     }
@@ -70,7 +71,8 @@ class VacancySearchFragment : Fragment() {
                 Bundle().apply {
                     viewModel.getCurrentFilters()?.let { filters ->
                         filters.areaCountry?.id?.let { putInt(KEY_AREA, it) }
-                        filters.industry?.id?.let { putInt(KEY_INDUSTRY, it) }
+                        filters.industry?.id?.let { putInt(KEY_INDUSTRY_ID, it) }
+                        filters.industry?.name?.let { putString(KEY_INDUSTRY_NAME, it) }
                         filters.salary?.let { putInt(KEY_SALARY, it) }
                         filters.showSalary?.let { putBoolean(KEY_ONLY_WITH_SALARY, it) }
                     }
@@ -157,9 +159,9 @@ class VacancySearchFragment : Fragment() {
                 areaCountry = bundle.getInt(KEY_AREA)
                     .takeIf { it != 0 }
                     ?.let { SearchFilters.AreaCountry(it, "") },
-                industry = bundle.getInt(KEY_INDUSTRY)
+                industry = bundle.getInt(KEY_INDUSTRY_ID)
                     .takeIf { it != 0 }
-                    ?.let { SearchFilters.Industry(it, "") },
+                    ?.let { SearchFilters.Industry(it, bundle.getString(KEY_INDUSTRY_NAME) ?: "") },
                 salary = bundle.getInt(KEY_SALARY).takeIf { it != 0 },
                 showSalary = bundle.getBoolean(KEY_ONLY_WITH_SALARY, false)
             )

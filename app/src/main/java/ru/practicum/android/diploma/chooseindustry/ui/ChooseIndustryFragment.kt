@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
 import com.bumptech.glide.Glide
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
@@ -15,9 +17,15 @@ import ru.practicum.android.diploma.chooseindustry.model.ChooseIndustryState
 import ru.practicum.android.diploma.chooseindustry.model.RecyclerState
 import ru.practicum.android.diploma.chooseindustry.presentation.ChooseIndustryAdapter
 import ru.practicum.android.diploma.chooseindustry.presentation.ChooseIndustryViewModel
+import ru.practicum.android.diploma.core.domain.models.SearchFilters
 import ru.practicum.android.diploma.core.domain.models.VacancyDetails
 import ru.practicum.android.diploma.core.ui.state.PlaceholderType
 import ru.practicum.android.diploma.databinding.FragmentChooseIndustryBinding
+import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_AREA
+import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_INDUSTRY_ID
+import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_INDUSTRY_NAME
+import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_ONLY_WITH_SALARY
+import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_SALARY
 
 class ChooseIndustryFragment : Fragment() {
 
@@ -47,6 +55,7 @@ class ChooseIndustryFragment : Fragment() {
         init()
         initToolbar()
         initSearch()
+        setBackPressedListener()
     }
 
     override fun onDestroyView() {
@@ -55,8 +64,9 @@ class ChooseIndustryFragment : Fragment() {
     }
 
     private fun init() {
-        val id = arguments?.getInt("id")
-        val name = arguments?.getString("name")
+        initFilters()
+        val id = viewModel.getCurrentFilters()?.industry?.id
+        val name = viewModel.getCurrentFilters()?.industry?.name
 
         if (id != null && name != null) {
             viewModel.selectIndustry(VacancyDetails.Industry(id = id, name = name))
@@ -68,22 +78,85 @@ class ChooseIndustryFragment : Fragment() {
         // Кнопка "Выбрать"
         binding.buttonApply.setOnClickListener {
             val selectedItem = viewModel.getSelectItem()
+            navigateToFilters(selectedItem)
+        }
+    }
 
-            if (selectedItem != null) {
-                findNavController().navigate(
-                    R.id.action_chooseIndustryFragment_to_filtersFragment,
-                    Bundle().apply {
-                        putInt("id", selectedItem.id)
-                        putString("name", selectedItem.name)
-                    }
-                )
+    private fun navigateToFilters(selectedItem: VacancyDetails.Industry? = null) {
+        findNavController().navigate(
+            R.id.action_chooseIndustryFragment_to_filtersFragment,
+            createFilterBundle(selectedItem),
+            navOptions {
+                popUpTo(R.id.filtersFragment) {
+                    inclusive = true
+                }
+            }
+        )
+    }
+
+    private fun createFilterBundle(selectedItem: VacancyDetails.Industry? = null): Bundle {
+        return Bundle().apply {
+            viewModel.getCurrentFilters()?.let { filters ->
+                filters.areaCountry?.id?.let { putInt(KEY_AREA, it) }
+                addIndustryIfCan(filters, selectedItem)
+                filters.salary?.let { putInt(KEY_SALARY, it) }
+                filters.showSalary?.let { putBoolean(KEY_ONLY_WITH_SALARY, it) }
             }
         }
     }
 
+    private fun Bundle.addIndustryIfCan(filters: SearchFilters, selectedItem: VacancyDetails.Industry?) {
+        apply {
+            val filtersIndustryId = filters.industry?.id
+            val filtersIndustryName = filters.industry?.name
+            if (selectedItem != null) {
+                putInt(KEY_INDUSTRY_ID, selectedItem.id)
+                putString(KEY_INDUSTRY_NAME, selectedItem.name)
+            } else {
+                if (filtersIndustryId != null) {
+                    putInt(KEY_INDUSTRY_ID, filtersIndustryId)
+                }
+                if (filtersIndustryName != null) {
+                    putString(KEY_INDUSTRY_NAME, filtersIndustryName)
+                }
+            }
+        }
+    }
+
+    private fun setBackPressedListener() {
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    navigateToFilters()
+                }
+            }
+        )
+    }
+
+    private fun initFilters() {
+        val args = arguments ?: return
+        setFilters(args)
+    }
+
+    private fun setFilters(args: Bundle) {
+        viewModel.setFilters(
+            SearchFilters(
+                areaCountry = args.getInt(KEY_AREA)
+                    .takeIf { it != 0 }
+                    ?.let { SearchFilters.AreaCountry(it, "") },
+                industry = args.getInt(KEY_INDUSTRY_ID)
+                    .takeIf { it != 0 }
+                    ?.let { SearchFilters.Industry(it, args.getString(KEY_INDUSTRY_NAME) ?: "") },
+                salary = args.getInt(KEY_SALARY).takeIf { it != 0 },
+                showSalary = args.getBoolean(KEY_ONLY_WITH_SALARY, false)
+            )
+        )
+    }
+
     private fun initToolbar() {
         binding.toolbar.setNavigationOnClickListener {
-            findNavController().popBackStack()
+            navigateToFilters()
         }
     }
 

@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.chooseindustry.domain.api.ChooseIndustryInteractor
 import ru.practicum.android.diploma.chooseindustry.model.ChooseIndustryState
 import ru.practicum.android.diploma.chooseindustry.model.RecyclerState
+import ru.practicum.android.diploma.core.domain.models.SearchFilters
 import ru.practicum.android.diploma.core.domain.models.VacancyDetails
 
 class ChooseIndustryViewModel(
@@ -16,6 +17,14 @@ class ChooseIndustryViewModel(
 
     private var recyclerState = RecyclerState(list = listOf(), filter = "", selectItem = null)
     private val pageLiveData = MutableLiveData<ChooseIndustryState>(ChooseIndustryState.Loading)
+    private var filters: SearchFilters? = null
+
+    fun setFilters(searchFilters: SearchFilters) {
+        filters = searchFilters
+    }
+
+    fun getCurrentFilters(): SearchFilters? = filters
+
     fun observePage(): LiveData<ChooseIndustryState> = pageLiveData
 
     fun getSelectItem(): VacancyDetails.Industry? {

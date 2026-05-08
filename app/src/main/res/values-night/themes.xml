@@ -5,6 +5,8 @@
         <item name="defaultTextColor">@color/white</item>
         <item name="defaultBackground">@color/black</item>
 
+        <item name="vacancyItemColor">@color/white</item>
+
         <item name="android:windowBackground">?attr/defaultBackground</item>
 
         <item name="searchBackground">@color/gray</item>

@@ -30,6 +30,10 @@
         <item name="android:fontFamily">@font/ys_display_regular</item>
     </style>
 
+    <style name="VacancyItemSpec">
+        <item name="vacancyItemColor">@color/black</item>
+    </style>
+
     <style name="VacancyItemImg">
         <item name="android:scaleType">center</item>
         <item name="cornerSize">@dimen/radius_md</item>
@@ -44,13 +48,13 @@
     <style name="VacancyItemTitle">
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textSize">@dimen/text_size_xl</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">?attr/vacancyItemColor</item>
     </style>
 
     <style name="VacancyItemText">
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textSize">@dimen/text_size_md</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">?attr/vacancyItemColor</item>
     </style>
 
     <style name="FavoritesPlaceholder">
@@ -127,6 +131,10 @@
 
     <style name="SearchProgressBar">
         <item name="android:indeterminateTint">@color/blue</item>
+    </style>
+
+    <style name="SearchButtonIcon">
+        <item name="android:tint">@color/black</item>
     </style>
 
     <style name="IndustryItemText">

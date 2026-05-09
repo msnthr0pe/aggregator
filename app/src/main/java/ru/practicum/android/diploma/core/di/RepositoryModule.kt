@@ -1,6 +1,8 @@
 package ru.practicum.android.diploma.core.di
 
 import org.koin.dsl.module
+import ru.practicum.android.diploma.chooseindustry.data.impl.ChooseIndustryRepositoryImpl
+import ru.practicum.android.diploma.chooseindustry.domain.api.ChooseIndustryRepository
 import ru.practicum.android.diploma.core.data.favorites.FavoritesRepositoryImpl
 import ru.practicum.android.diploma.core.domain.favorites.repository.FavoritesRepository
 import ru.practicum.android.diploma.vacancy.data.impl.VacancyDetailsRepositoryImpl
@@ -22,4 +24,7 @@ val repositoryModule = module {
         VacancyDetailsRepositoryImpl(get())
     }
 
+    single<ChooseIndustryRepository> {
+        ChooseIndustryRepositoryImpl(get())
+    }
 }

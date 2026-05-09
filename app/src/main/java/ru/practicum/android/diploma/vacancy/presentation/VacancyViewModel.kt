@@ -26,18 +26,23 @@ class VacancyViewModel(
     /** Проверка на избранное + запрос на сервер за данными в ОДНОМ потоке */
     fun init(vacancyId: String) {
         viewModelScope.launch {
-            val isFavorite = interactorFavorites.isFavorite(vacancyId)
+            val favoriteInfo = interactorFavorites.getFavoriteById(vacancyId)
 
             interactor
                 .getVacancyInfo(vacancyId)
                 .collect { result ->
                     result.onSuccess {
-                        vacancyState = vacancyState.copy(vacancyDetails = it, isFavorite = isFavorite)
+                        vacancyState = vacancyState.copy(vacancyDetails = it, isFavorite = favoriteInfo != null)
                         _vacancyStateLiveData.postValue(VacancyPageState.Success(vacancyState))
                     }
 
                     result.onFailure {
-                        _vacancyStateLiveData.postValue(VacancyPageState.Error(it.message.toString()))
+                        if (favoriteInfo != null) {
+                            vacancyState = vacancyState.copy(vacancyDetails = favoriteInfo, isFavorite = true)
+                            _vacancyStateLiveData.postValue(VacancyPageState.Success(vacancyState))
+                        } else {
+                            _vacancyStateLiveData.postValue(VacancyPageState.Error(it.message.toString()))
+                        }
                     }
                 }
         }

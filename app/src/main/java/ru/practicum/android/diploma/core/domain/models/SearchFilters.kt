@@ -9,16 +9,16 @@ data class SearchFilters(
 ) {
     data class AreaCountry(
         val id: Int,
-        val name: String,
+        val name: String = "",
     )
 
     data class AreaRegion(
         val id: Int,
-        val name: String,
+        val name: String = "",
     )
 
     data class Industry(
         val id: Int,
-        val name: String
+        val name: String = "",
     )
 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/industry_item_height"
+    android:paddingStart="@dimen/spacing_md"
+    android:paddingEnd="@dimen/spacing_xs"
+    android:paddingVertical="@dimen/spacing_sm"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/industryItemName"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        tools:text="Авиационная, вертолетная и аэрокосмическая промышленность"
+        style="@style/IndustryItemText" />
+
+    <RadioButton
+        android:id="@+id/industryItemButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:focusable="false"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        style="@style/IndustryItemRadio"/>
+</LinearLayout>

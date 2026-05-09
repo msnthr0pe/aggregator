@@ -33,6 +33,8 @@ class VacancySearchFragment : Fragment() {
         const val KEY_AREA = "area"
         const val KEY_INDUSTRY_ID = "industry"
         const val KEY_INDUSTRY_NAME = "industry_name"
+        const val KEY_PENDING_INDUSTRY_ID = "pending_industry"
+        const val KEY_PENDING_INDUSTRY_NAME = "pending_industry_name"
         const val KEY_SALARY = "salary"
         const val KEY_ONLY_WITH_SALARY = "only_with_salary"
     }

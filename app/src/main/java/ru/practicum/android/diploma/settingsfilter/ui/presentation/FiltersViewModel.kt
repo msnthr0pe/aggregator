@@ -9,6 +9,8 @@ class FiltersViewModel : ViewModel() {
     private var areaCountryId: Int? = null
     private var industryId: Int? = null
     private var industryName: String? = null
+    private var pendingIndustryId: Int? = null
+    private var pendingIndustryName: String? = null
     private var salary: Int? = null
     private var showSalary: Boolean? = null
 
@@ -16,6 +18,11 @@ class FiltersViewModel : ViewModel() {
         filters = searchFilters
         industryId = searchFilters.industry?.id
         industryName = searchFilters.industry?.name
+    }
+
+    fun setPendingIndustry(id: Int?, name: String?) {
+        pendingIndustryId = id
+        pendingIndustryName = name
     }
 
     fun updateFilters(
@@ -60,6 +67,26 @@ class FiltersViewModel : ViewModel() {
 
     fun resetFilters() {
         filters = null
+    }
+
+    fun applyPendingIndustryIfCan() {
+        val id = pendingIndustryId
+        val name = pendingIndustryName
+        if (id != null && id != 0 && !name.isNullOrEmpty()) {
+            industryId = id
+            industryName = name
+            updateFilters()
+        }
+    }
+
+    fun getPendingIndustry(): Pair<Int, String>? {
+        val id = pendingIndustryId
+        val name = pendingIndustryName
+        return if (id != null && name != null) {
+            id to name
+        } else {
+            null
+        }
     }
 
     fun getCurrentFilters(): SearchFilters? = filters

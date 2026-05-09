@@ -14,11 +14,9 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentFiltersBinding
 import ru.practicum.android.diploma.settingsfilter.ui.presentation.FiltersViewModel
 import ru.practicum.android.diploma.settingsfilter.ui.util.getFilters
-import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_AREA
-import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_INDUSTRY_ID
-import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_INDUSTRY_NAME
-import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_ONLY_WITH_SALARY
-import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_SALARY
+import ru.practicum.android.diploma.settingsfilter.ui.util.putFilters
+import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_PENDING_INDUSTRY_ID
+import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_PENDING_INDUSTRY_NAME
 
 class FiltersFragment : Fragment() {
 
@@ -46,11 +44,16 @@ class FiltersFragment : Fragment() {
         val args = arguments ?: return
 
         setFilters(args)
+        val pendingIndustryId = args.getInt(KEY_PENDING_INDUSTRY_ID)
+        val pendingIndustryName = args.getString(KEY_PENDING_INDUSTRY_NAME)
+        viewModel.setPendingIndustry(pendingIndustryId, pendingIndustryName)
         with(binding) {
             val currentFilters = viewModel.getCurrentFilters()
             currentFilters?.industry?.let {
-                setIndustryLayoutMode(isEmpty = false)
-                filledIndustryText.text = it.name
+                setIndustryName(it.name)
+            }
+            pendingIndustryName?.let {
+                setIndustryName(it)
             }
             currentFilters?.salary?.let {
                 desiredSalary.setText(it.toString())
@@ -58,6 +61,11 @@ class FiltersFragment : Fragment() {
             }
             check.isChecked = currentFilters?.showSalary == true
         }
+    }
+
+    private fun FragmentFiltersBinding.setIndustryName(name: String) {
+        setIndustryLayoutMode(isEmpty = false)
+        filledIndustryText.text = name
     }
 
     private fun setFilters(args: Bundle) {
@@ -112,6 +120,7 @@ class FiltersFragment : Fragment() {
                 showSalary = check.isChecked,
                 clearIndustrySelection = filledIndustryText.text.isEmpty()
             )
+            viewModel.applyPendingIndustryIfCan()
             sendResultAndClose()
         }
     }
@@ -138,7 +147,6 @@ class FiltersFragment : Fragment() {
 
     private fun FragmentFiltersBinding.setToolbarNavigationListener() {
         toolbar.setNavigationOnClickListener {
-            viewModel.resetFilters()
             sendResultAndClose()
         }
     }
@@ -148,7 +156,6 @@ class FiltersFragment : Fragment() {
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    viewModel.resetFilters()
                     sendResultAndClose()
                 }
             }
@@ -168,15 +175,8 @@ class FiltersFragment : Fragment() {
     }
 
     private fun getResultFilterBundle(): Bundle {
-        return Bundle().apply {
-            viewModel.getCurrentFilters()?.let { filters ->
-                filters.areaCountry?.id?.let { putInt(KEY_AREA, it) }
-                filters.industry?.id?.let { putInt(KEY_INDUSTRY_ID, it) }
-                filters.industry?.name?.let { putString(KEY_INDUSTRY_NAME, it) }
-                filters.salary?.let { putInt(KEY_SALARY, it) }
-                filters.showSalary?.let { putBoolean(KEY_ONLY_WITH_SALARY, it) }
-            }
-        }
+        val filters = viewModel.getCurrentFilters()
+        return filters?.let { putFilters(it, viewModel.getPendingIndustry()) } ?: run { Bundle() }
     }
 
     private fun sendResultAndOpenIndustries() {

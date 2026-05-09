@@ -7,6 +7,7 @@ import com.bumptech.glide.Glide
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.domain.models.SearchFilters
 import ru.practicum.android.diploma.core.ui.state.PlaceholderType
+import ru.practicum.android.diploma.core.util.hideKeyboard
 import ru.practicum.android.diploma.databinding.FragmentVacancySearchBinding
 import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_AREA
 import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_INDUSTRY_ID
@@ -43,10 +44,10 @@ fun FragmentVacancySearchBinding.showNothing(context: Context) {
 /** Отображение пустой страницы */
 fun FragmentVacancySearchBinding.showEmpty(context: Context) {
     recyclerList.visibility = View.GONE
-    buttonCount.visibility = View.GONE
     progressBar.visibility = View.GONE
     placeholder.placeholderInfo.visibility = View.VISIBLE
-    buttonCount.visibility = View.GONE
+    buttonCount.visibility = View.VISIBLE
+    buttonCount.text = context.getString(R.string.no_vacancy)
 
     initPlaceholder(context, PlaceholderType.EMPTY, context.getString(R.string.favorites_error_load))
 }
@@ -58,6 +59,7 @@ fun FragmentVacancySearchBinding.showLoading() {
     progressBar.visibility = View.VISIBLE
     placeholder.placeholderInfo.visibility = View.GONE
     buttonCount.visibility = View.GONE
+    search.hideKeyboard()
 }
 
 /** Отображение ошибки */

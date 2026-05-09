@@ -36,6 +36,7 @@
         android:id="@+id/searchWrapper"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:cursorColor="@color/blue"
         app:layout_constraintTop_toBottomOf="@id/btn_back"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"

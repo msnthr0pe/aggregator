@@ -200,10 +200,7 @@ class VacancySearchFragment : Fragment() {
         when (state) {
             is VacancySearchState.Nothing -> binding.showNothing(rootActivity)
             is VacancySearchState.Empty -> binding.showEmpty(rootActivity)
-            is VacancySearchState.Loading -> {
-                binding.showLoading()
-                _binding?.search?.hideKeyboard()
-            }
+            is VacancySearchState.Loading -> binding.showLoading()
             is VacancySearchState.Error -> binding.showError(rootActivity, state.serverCode)
             is VacancySearchState.Success -> binding.showSuccess(rootActivity, state.foundItems)
         }

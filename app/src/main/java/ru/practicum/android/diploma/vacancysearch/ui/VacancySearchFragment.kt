@@ -17,7 +17,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.domain.models.VacancyCard
 import ru.practicum.android.diploma.core.ui.root.RootActivity
-import ru.practicum.android.diploma.core.util.hideKeyboard
 import ru.practicum.android.diploma.databinding.FragmentVacancySearchBinding
 import ru.practicum.android.diploma.vacancy.ui.VacancyFragment
 import ru.practicum.android.diploma.vacancysearch.ui.state.VacancySearchState

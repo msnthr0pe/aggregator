@@ -11,6 +11,7 @@ import android.text.Spanned
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.StyleSpan
 import android.util.Log
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DimenRes
@@ -211,6 +212,12 @@ fun clickDebounce(
         }
     }
     return current.value
+}
+
+fun View.hideKeyboard() {
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE)
+        as android.view.inputmethod.InputMethodManager
+    imm.hideSoftInputFromWindow(windowToken, 0)
 }
 
 fun formatSalary(salary: VacancyCardSalary?, resources: Resources): String {

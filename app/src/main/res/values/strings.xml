@@ -42,4 +42,5 @@
     <string name="do_not_show_without_salary">Не показывать без зарплаты</string>
     <string name="apply">Применить</string>
     <string name="discard">Сбросить</string>
+    <string name="no_vacancy">Таких вакансий нет</string>
 </resources>

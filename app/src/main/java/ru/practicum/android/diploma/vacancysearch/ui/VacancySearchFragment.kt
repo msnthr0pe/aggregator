@@ -17,6 +17,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.core.domain.models.VacancyCard
 import ru.practicum.android.diploma.core.ui.root.RootActivity
+import ru.practicum.android.diploma.core.util.hideKeyboard
 import ru.practicum.android.diploma.databinding.FragmentVacancySearchBinding
 import ru.practicum.android.diploma.vacancy.ui.VacancyFragment
 import ru.practicum.android.diploma.vacancysearch.ui.state.VacancySearchState
@@ -199,7 +200,10 @@ class VacancySearchFragment : Fragment() {
         when (state) {
             is VacancySearchState.Nothing -> binding.showNothing(rootActivity)
             is VacancySearchState.Empty -> binding.showEmpty(rootActivity)
-            is VacancySearchState.Loading -> binding.showLoading()
+            is VacancySearchState.Loading -> {
+                binding.showLoading()
+                _binding?.search?.hideKeyboard()
+            }
             is VacancySearchState.Error -> binding.showError(rootActivity, state.serverCode)
             is VacancySearchState.Success -> binding.showSuccess(rootActivity, state.foundItems)
         }

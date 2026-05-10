@@ -25,6 +25,8 @@ import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Compa
 import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_INDUSTRY_ID
 import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_INDUSTRY_NAME
 import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_ONLY_WITH_SALARY
+import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_PENDING_INDUSTRY_ID
+import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_PENDING_INDUSTRY_NAME
 import ru.practicum.android.diploma.vacancysearch.ui.VacancySearchFragment.Companion.KEY_SALARY
 
 class ChooseIndustryFragment : Fragment() {
@@ -65,8 +67,8 @@ class ChooseIndustryFragment : Fragment() {
 
     private fun init() {
         initFilters()
-        val id = viewModel.getCurrentFilters()?.industry?.id
-        val name = viewModel.getCurrentFilters()?.industry?.name
+        val id = viewModel.getPendingIndustry()?.first ?: viewModel.getCurrentFilters()?.industry?.id
+        val name = viewModel.getPendingIndustry()?.second ?: viewModel.getCurrentFilters()?.industry?.name
 
         if (id != null && name != null) {
             viewModel.selectIndustry(VacancyDetails.Industry(id = id, name = name))
@@ -110,15 +112,19 @@ class ChooseIndustryFragment : Fragment() {
             val filtersIndustryId = filters.industry?.id
             val filtersIndustryName = filters.industry?.name
             if (selectedItem != null) {
-                putInt(KEY_INDUSTRY_ID, selectedItem.id)
-                putString(KEY_INDUSTRY_NAME, selectedItem.name)
+                putInt(KEY_PENDING_INDUSTRY_ID, selectedItem.id)
+                putString(KEY_PENDING_INDUSTRY_NAME, selectedItem.name)
             } else {
-                if (filtersIndustryId != null) {
-                    putInt(KEY_INDUSTRY_ID, filtersIndustryId)
+                viewModel.getPendingIndustry()?.let {
+                    putInt(KEY_PENDING_INDUSTRY_ID, it.first)
+                    putString(KEY_PENDING_INDUSTRY_NAME, it.second)
                 }
-                if (filtersIndustryName != null) {
-                    putString(KEY_INDUSTRY_NAME, filtersIndustryName)
-                }
+            }
+            if (filtersIndustryId != null) {
+                putInt(KEY_INDUSTRY_ID, filtersIndustryId)
+            }
+            if (filtersIndustryName != null) {
+                putString(KEY_INDUSTRY_NAME, filtersIndustryName)
             }
         }
     }
@@ -152,6 +158,9 @@ class ChooseIndustryFragment : Fragment() {
                 showSalary = args.getBoolean(KEY_ONLY_WITH_SALARY, false)
             )
         )
+        val pendingIndustryId = args.getInt(KEY_PENDING_INDUSTRY_ID)
+        val pendingIndustryName = args.getString(KEY_PENDING_INDUSTRY_NAME)
+        viewModel.setPendingIndustry(pendingIndustryId, pendingIndustryName)
     }
 
     private fun initToolbar() {

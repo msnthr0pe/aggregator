@@ -18,9 +18,26 @@ class ChooseIndustryViewModel(
     private var recyclerState = RecyclerState(list = listOf(), filter = "", selectItem = null)
     private val pageLiveData = MutableLiveData<ChooseIndustryState>(ChooseIndustryState.Loading)
     private var filters: SearchFilters? = null
+    private var pendingIndustryId: Int? = null
+    private var pendingIndustryName: String? = null
 
     fun setFilters(searchFilters: SearchFilters) {
         filters = searchFilters
+    }
+
+    fun setPendingIndustry(id: Int?, name: String?) {
+        pendingIndustryId = id
+        pendingIndustryName = name
+    }
+
+    fun getPendingIndustry(): Pair<Int, String>? {
+        val id = pendingIndustryId
+        val name = pendingIndustryName
+        return if (id != null && name != null) {
+            id to name
+        } else {
+            null
+        }
     }
 
     fun getCurrentFilters(): SearchFilters? = filters

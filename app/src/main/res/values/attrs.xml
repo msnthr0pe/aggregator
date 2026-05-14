@@ -6,4 +6,6 @@
 
     <attr name="searchBackground" format="color" />
     <attr name="searchTint" format="color" />
+
+    <attr name="vacancyItemColor" format="color" />
 </resources>

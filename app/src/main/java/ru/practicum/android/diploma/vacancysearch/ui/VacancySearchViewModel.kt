@@ -14,26 +14,27 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import ru.practicum.android.diploma.core.domain.models.SearchFilters
 import ru.practicum.android.diploma.core.util.debounce
+import ru.practicum.android.diploma.settingsfilter.domain.api.FilterSettingsInteractor
 import ru.practicum.android.diploma.vacancysearch.domain.api.VacancySearchInteractor
 import ru.practicum.android.diploma.vacancysearch.ui.state.VacancySearchState
 
 class VacancySearchViewModel(
-    private val vacancySearchInteractor: VacancySearchInteractor
+    private val vacancySearchInteractor: VacancySearchInteractor,
+    private val filterSettingsInteractor: FilterSettingsInteractor
 ) : ViewModel() {
 
     companion object {
-        private const val PAGE_SIZE = 20 // Кол-во элементов на странице
+        private const val PAGE_SIZE = 20
     }
+
     private val pageLiveData = MutableLiveData<VacancySearchState>(VacancySearchState.Nothing)
     fun observePage(): LiveData<VacancySearchState> = pageLiveData
 
-    private val _searchQuery = MutableStateFlow("") // Для динамического обновления списка
+    private val _searchQuery = MutableStateFlow("")
     var latestSearchQuery: String = ""
     private var foundVacanciesAmount = -1
 
-    private var currentFilters: SearchFilters? = null
-
-    // Тут будут данные по фильтрам (SearchFilters)
+    private var currentFilters: SearchFilters? = filterSettingsInteractor.getFilters()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val items = _searchQuery.flatMapLatest { query ->
@@ -91,7 +92,6 @@ class VacancySearchViewModel(
 
     fun getCurrentFilters(): SearchFilters? = currentFilters
 
-    /** Обновление данных для страницы */
     fun updatePageLiveData(data: VacancySearchState) {
         val state = if (data is VacancySearchState.Success) {
             data.copy(foundItems = foundVacanciesAmount)

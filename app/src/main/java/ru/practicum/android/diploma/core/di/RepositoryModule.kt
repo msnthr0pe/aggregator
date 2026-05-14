@@ -5,6 +5,8 @@ import ru.practicum.android.diploma.chooseindustry.data.impl.ChooseIndustryRepos
 import ru.practicum.android.diploma.chooseindustry.domain.api.ChooseIndustryRepository
 import ru.practicum.android.diploma.core.data.favorites.FavoritesRepositoryImpl
 import ru.practicum.android.diploma.core.domain.favorites.repository.FavoritesRepository
+import ru.practicum.android.diploma.settingsfilter.data.impl.FilterSettingsRepositoryImpl
+import ru.practicum.android.diploma.settingsfilter.domain.api.FilterSettingsRepository
 import ru.practicum.android.diploma.vacancy.data.impl.VacancyDetailsRepositoryImpl
 import ru.practicum.android.diploma.vacancy.domain.api.VacancyDetailsRepository
 import ru.practicum.android.diploma.vacancysearch.data.impl.VacancySearchRepositoryImpl
@@ -26,5 +28,9 @@ val repositoryModule = module {
 
     single<ChooseIndustryRepository> {
         ChooseIndustryRepositoryImpl(get())
+    }
+
+    single<FilterSettingsRepository> {
+        FilterSettingsRepositoryImpl(get())
     }
 }

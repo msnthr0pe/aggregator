@@ -1,5 +1,7 @@
 package ru.practicum.android.diploma.core.di
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.room.Room
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -39,5 +41,9 @@ val dataModule = module {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
             .addTypeConverter(VacancyTypeConverters(get()))
             .build()
+    }
+
+    single<SharedPreferences> {
+        androidContext().getSharedPreferences("filter_settings_prefs", Context.MODE_PRIVATE)
     }
 }

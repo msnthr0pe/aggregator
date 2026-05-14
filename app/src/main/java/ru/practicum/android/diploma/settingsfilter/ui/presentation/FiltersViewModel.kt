@@ -2,8 +2,11 @@ package ru.practicum.android.diploma.settingsfilter.ui.presentation
 
 import androidx.lifecycle.ViewModel
 import ru.practicum.android.diploma.core.domain.models.SearchFilters
+import ru.practicum.android.diploma.settingsfilter.domain.api.FilterSettingsInteractor
 
-class FiltersViewModel : ViewModel() {
+class FiltersViewModel(
+    private val filterSettingsInteractor: FilterSettingsInteractor
+) : ViewModel() {
     private var filters: SearchFilters? = null
 
     private var areaCountryId: Int? = null
@@ -42,10 +45,10 @@ class FiltersViewModel : ViewModel() {
         }
         salary?.let { this.salary = it }
         showSalary?.let { this.showSalary = it }
-        updateFilters()
+        buildAndSaveFilters()
     }
 
-    private fun updateFilters() {
+    private fun buildAndSaveFilters() {
         val areaCountry = areaCountryId?.let {
             SearchFilters.AreaCountry(it)
         }
@@ -63,10 +66,17 @@ class FiltersViewModel : ViewModel() {
             showSalary = showSalary,
         )
         filters = searchFilters
+        filterSettingsInteractor.saveFilters(searchFilters)
     }
 
     fun resetFilters() {
         filters = null
+        areaCountryId = null
+        industryId = null
+        industryName = null
+        salary = null
+        showSalary = null
+        filterSettingsInteractor.saveFilters(null)
     }
 
     fun applyPendingIndustryIfCan() {
@@ -75,7 +85,7 @@ class FiltersViewModel : ViewModel() {
         if (id != null && id != 0 && !name.isNullOrEmpty()) {
             industryId = id
             industryName = name
-            updateFilters()
+            buildAndSaveFilters()
         }
     }
 

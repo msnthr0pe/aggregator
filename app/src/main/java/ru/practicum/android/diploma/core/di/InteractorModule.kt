@@ -5,6 +5,8 @@ import ru.practicum.android.diploma.chooseindustry.domain.api.ChooseIndustryInte
 import ru.practicum.android.diploma.chooseindustry.domain.impl.ChooseIndustryInteractorImpl
 import ru.practicum.android.diploma.core.domain.favorites.interactor.FavoritesInteractor
 import ru.practicum.android.diploma.core.domain.favorites.interactorimpl.FavoritesInteractorImpl
+import ru.practicum.android.diploma.settingsfilter.domain.api.FilterSettingsInteractor
+import ru.practicum.android.diploma.settingsfilter.domain.impl.FilterSettingsInteractorImpl
 import ru.practicum.android.diploma.vacancy.domain.api.VacancyDetailsInteractor
 import ru.practicum.android.diploma.vacancy.domain.impl.VacancyDetailsInteractorImpl
 import ru.practicum.android.diploma.vacancysearch.domain.api.VacancySearchInteractor
@@ -28,4 +30,7 @@ val interactorModule = module {
         ChooseIndustryInteractorImpl(get())
     }
 
+    single<FilterSettingsInteractor> {
+        FilterSettingsInteractorImpl(get())
+    }
 }
